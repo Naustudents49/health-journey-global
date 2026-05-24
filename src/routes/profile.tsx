@@ -68,7 +68,8 @@ function ProfilePage() {
               <p className="text-sm font-medium text-foreground">{t("Account Status", "حالة الحساب")}</p>
               <p className="text-sm text-muted-foreground">{t("Active", "نشط")}</p>
             </div>
-          </<div className="flex items-center gap-3 rounded-lg bg-accent p-4">
+          </div>
+          <div className="flex items-center gap-3 rounded-lg bg-accent p-4">
             <HeartPulse className="h-5 w-5 text-primary" />
             <div>
               <p className="text-sm font-medium text-foreground">{t("Member Since", "عضو منذ")}</p>
