@@ -4,17 +4,55 @@ import type { User } from "@supabase/supabase-js";
 
 type UserRole = "admin" | "doctor" | "patient";
 
+interface ProfileLite {
+  id: string;
+  full_name: string | null;
+  avatar_url: string | null;
+  city: string | null;
+  country: string | null;
+}
+
 interface AuthState {
   user: User | null;
   role: UserRole | null;
+  profile: ProfileLite | null;
   isLoading: boolean;
   isAuthenticated: boolean;
+}
+
+async function fetchRole(userId: string): Promise<UserRole | null> {
+  try {
+    const { data, error } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", userId)
+      .maybeSingle();
+    if (error || !data) return null;
+    return data.role as UserRole;
+  } catch {
+    return null;
+  }
+}
+
+async function fetchProfile(userId: string): Promise<ProfileLite | null> {
+  try {
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("id, full_name, avatar_url, city, country")
+      .eq("user_id", userId)
+      .maybeSingle();
+    if (error || !data) return null;
+    return data as ProfileLite;
+  } catch {
+    return null;
+  }
 }
 
 export function useAuth() {
   const [state, setState] = useState<AuthState>({
     user: null,
     role: null,
+    profile: null,
     isLoading: true,
     isAuthenticated: false,
   });
@@ -22,49 +60,21 @@ export function useAuth() {
   useEffect(() => {
     let mounted = true;
 
-    const getSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+    const hydrate = async (user: User | null) => {
       if (!mounted) return;
-
-      if (session?.user) {
-        const role = await fetchRole(session.user.id);
-        setState({
-          user: session.user,
-          role,
-          isLoading: false,
-          isAuthenticated: true,
-        });
-      } else {
-        setState({
-          user: null,
-          role: null,
-          isLoading: false,
-          isAuthenticated: false,
-        });
+      if (!user) {
+        setState({ user: null, role: null, profile: null, isLoading: false, isAuthenticated: false });
+        return;
       }
+      const [role, profile] = await Promise.all([fetchRole(user.id), fetchProfile(user.id)]);
+      if (!mounted) return;
+      setState({ user, role, profile, isLoading: false, isAuthenticated: true });
     };
 
-    getSession();
+    supabase.auth.getSession().then(({ data: { session } }) => hydrate(session?.user ?? null));
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      if (!mounted) return;
-
-      if (session?.user) {
-        const role = await fetchRole(session.user.id);
-        setState({
-          user: session.user,
-          role,
-          isLoading: false,
-          isAuthenticated: true,
-        });
-      } else {
-        setState({
-          user: null,
-          role: null,
-          isLoading: false,
-          isAuthenticated: false,
-        });
-      }
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      hydrate(session?.user ?? null);
     });
 
     return () => {
@@ -75,28 +85,8 @@ export function useAuth() {
 
   const signOut = useCallback(async () => {
     await supabase.auth.signOut();
-    setState({
-      user: null,
-      role: null,
-      isLoading: false,
-      isAuthenticated: false,
-    });
+    setState({ user: null, role: null, profile: null, isLoading: false, isAuthenticated: false });
   }, []);
 
   return { ...state, signOut };
-}
-
-async function fetchRole(userId: string): Promise<UserRole | null> {
-  try {
-    const { data, error } = await supabase
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", userId)
-      .single();
-
-    if (error || !data) return null;
-    return data.role as UserRole;
-  } catch {
-    return null;
-  }
 }
