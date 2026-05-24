@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { HeartPulse, Menu, X, Globe, Check, ChevronDown, User, LogOut, Calendar } from "lucide-react";
+import { HeartPulse, Menu, X, Globe, Check, ChevronDown, User, LogOut, Calendar, LayoutDashboard } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useLanguage, LANGUAGES, type Language } from "@/hooks/useLanguage";
 import { useAuth } from "@/hooks/useAuth";
@@ -23,7 +23,7 @@ export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
   const { language, setLanguage, t } = useLanguage();
-  const { user, isAuthenticated, signOut } = useAuth();
+  const { user, role, isAuthenticated, signOut } = useAuth();
 
   const links = (navLinks as Record<string, typeof navLinks.en>)[language] ?? navLinks.en;
   const currentLang = LANGUAGES.find((l) => l.code === language) ?? LANGUAGES[1];
@@ -66,7 +66,7 @@ export function Header() {
           />
 
           {isAuthenticated ? (
-            <UserMenu user={user} signOut={signOut} t={t} />
+            <UserMenu user={user} role={role} signOut={signOut} t={t} />
           ) : (
             <>
               <Link
@@ -239,10 +239,12 @@ function LanguageDropdown({
 
 function UserMenu({
   user,
+  role,
   signOut,
   t,
 }: {
   user: { email?: string } | null;
+  role: "admin" | "doctor" | "patient" | null;
   signOut: () => Promise<void>;
   t: (en: string, ar: string) => string;
 }) {
@@ -271,6 +273,16 @@ function UserMenu({
       </button>
       {open && (
         <div className="absolute end-0 mt-2 w-48 rounded-xl border border-border bg-popover p-1 shadow-lg z-50">
+          {role === "doctor" && (
+            <Link
+              to="/dashboard"
+              onClick={() => setOpen(false)}
+              className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-foreground transition-colors hover:bg-accent"
+            >
+              <LayoutDashboard className="h-4 w-4" />
+              {t("Dashboard", "لوحة التحكم")}
+            </Link>
+          )}
           <Link
             to="/profile"
             onClick={() => setOpen(false)}
