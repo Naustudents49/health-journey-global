@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/hooks/useLanguage";
 import { supabase } from "@/integrations/supabase/client";
-import { Calendar, Clock, Loader2, X, CheckCircle2 } from "lucide-react";
+import { Calendar, Clock, Loader2, X, CheckCircle2, Video } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/appointments")({
@@ -87,10 +87,10 @@ function AppointmentsPage() {
             }[a.status] ?? "bg-muted text-muted-foreground";
 
             return (
-              <div key={a.id} className="bg-card border border-border rounded-xl p-5 flex items-center justify-between gap-4">
+              <div key={a.id} className="bg-card border border-border rounded-xl p-5 flex items-center justify-between gap-4 flex-wrap">
                 <div className="flex items-center gap-4">
-                  <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
-                    <Calendar className="h-6 w-6" />
+                  <div className={`h-12 w-12 rounded-lg flex items-center justify-center ${a.appointment_type === "video" ? "bg-teal/10 text-teal" : "bg-primary/10 text-primary"}`}>
+                    {a.appointment_type === "video" ? <Video className="h-6 w-6" /> : <Calendar className="h-6 w-6" />}
                   </div>
                   <div>
                     <p className="font-medium text-foreground">
@@ -98,23 +98,38 @@ function AppointmentsPage() {
                       <Clock className="inline h-3 w-3 mx-1" />
                       {date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                     </p>
-                    <div className="mt-1 flex items-center gap-2 text-sm">
+                    <div className="mt-1 flex items-center gap-2 text-sm flex-wrap">
                       <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${statusColor}`}>{a.status}</span>
                       <span className="text-muted-foreground">{a.fee} {t("EGP", "ج.م")}</span>
+                      {a.appointment_type === "video" && (
+                        <span className="text-xs text-teal font-medium">{t("Video call", "مكالمة فيديو")}</span>
+                      )}
                     </div>
                   </div>
                 </div>
 
-                {a.status !== "cancelled" && a.status !== "completed" && !isPast && (
-                  <button
-                    onClick={() => cancelMutation.mutate(a.id)}
-                    className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition"
-                    title={t("Cancel", "إلغاء")}
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
-                )}
-                {a.status === "completed" && <CheckCircle2 className="h-5 w-5 text-teal" />}
+                <div className="flex items-center gap-2">
+                  {a.appointment_type === "video" && a.status === "confirmed" && (
+                    <Link
+                      to="/consultation/$id"
+                      params={{ id: a.id }}
+                      className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-teal text-white text-sm font-medium hover:opacity-90"
+                    >
+                      <Video className="h-4 w-4" />
+                      {t("Join", "ادخل")}
+                    </Link>
+                  )}
+                  {a.status !== "cancelled" && a.status !== "completed" && !isPast && (
+                    <button
+                      onClick={() => cancelMutation.mutate(a.id)}
+                      className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition"
+                      title={t("Cancel", "إلغاء")}
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  )}
+                  {a.status === "completed" && <CheckCircle2 className="h-5 w-5 text-teal" />}
+                </div>
               </div>
             );
           })}

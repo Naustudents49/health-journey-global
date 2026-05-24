@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { Star, MapPin, BadgeCheck, Calendar, Clock, ArrowLeft, Loader2, MessageSquare } from "lucide-react";
+import { Star, MapPin, BadgeCheck, Calendar, Clock, ArrowLeft, Loader2, MessageSquare, Video, Building2 } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/doctor/$id")({
@@ -25,6 +25,7 @@ function DoctorDetailPage() {
   const queryClient = useQueryClient();
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
+  const [appointmentType, setAppointmentType] = useState<"in_person" | "video">("in_person");
   const [notes, setNotes] = useState("");
   const [reviewRating, setReviewRating] = useState(5);
   const [reviewText, setReviewText] = useState("");
@@ -61,6 +62,7 @@ function DoctorDetailPage() {
         patient_id: profile.id,
         doctor_id: id,
         scheduled_at: scheduled,
+        appointment_type: appointmentType,
         fee: doctor?.consultation_fee ?? 0,
         notes: notes || null,
       });
@@ -249,6 +251,37 @@ function DoctorDetailPage() {
                 </div>
               ) : (
                 <div className="mt-4 space-y-3">
+                  <div>
+                    <label className="text-sm font-medium text-foreground mb-1.5 block">
+                      {t("Consultation type", "نوع الاستشارة")}
+                    </label>
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setAppointmentType("in_person")}
+                        className={`flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border text-sm font-medium transition ${
+                          appointmentType === "in_person"
+                            ? "border-primary bg-primary/10 text-primary"
+                            : "border-border bg-background text-muted-foreground hover:bg-accent"
+                        }`}
+                      >
+                        <Building2 className="h-4 w-4" />
+                        {t("In-person", "في العيادة")}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setAppointmentType("video")}
+                        className={`flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border text-sm font-medium transition ${
+                          appointmentType === "video"
+                            ? "border-primary bg-primary/10 text-primary"
+                            : "border-border bg-background text-muted-foreground hover:bg-accent"
+                        }`}
+                      >
+                        <Video className="h-4 w-4" />
+                        {t("Video", "فيديو")}
+                      </button>
+                    </div>
+                  </div>
                   <div>
                     <label className="text-sm font-medium text-foreground flex items-center gap-1 mb-1">
                       <Calendar className="h-4 w-4" /> {t("Date", "التاريخ")}
