@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      appointments: {
+        Row: {
+          appointment_type: string
+          created_at: string
+          doctor_id: string
+          duration_minutes: number
+          fee: number
+          id: string
+          notes: string | null
+          patient_id: string
+          scheduled_at: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          appointment_type?: string
+          created_at?: string
+          doctor_id: string
+          duration_minutes?: number
+          fee?: number
+          id?: string
+          notes?: string | null
+          patient_id: string
+          scheduled_at: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          appointment_type?: string
+          created_at?: string
+          doctor_id?: string
+          duration_minutes?: number
+          fee?: number
+          id?: string
+          notes?: string | null
+          patient_id?: string
+          scheduled_at?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       doctor_details: {
         Row: {
           bio: string | null
@@ -147,6 +189,63 @@ export type Database = {
           phone?: string | null
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      reviews: {
+        Row: {
+          appointment_id: string | null
+          comment: string | null
+          created_at: string
+          doctor_id: string
+          id: string
+          patient_id: string
+          rating: number
+        }
+        Insert: {
+          appointment_id?: string | null
+          comment?: string | null
+          created_at?: string
+          doctor_id: string
+          id?: string
+          patient_id: string
+          rating: number
+        }
+        Update: {
+          appointment_id?: string | null
+          comment?: string | null
+          created_at?: string
+          doctor_id?: string
+          id?: string
+          patient_id?: string
+          rating?: number
+        }
+        Relationships: []
+      }
+      specialties: {
+        Row: {
+          created_at: string
+          icon: string | null
+          id: string
+          name_ar: string
+          name_en: string
+          slug: string
+        }
+        Insert: {
+          created_at?: string
+          icon?: string | null
+          id?: string
+          name_ar: string
+          name_en: string
+          slug: string
+        }
+        Update: {
+          created_at?: string
+          icon?: string | null
+          id?: string
+          name_ar?: string
+          name_en?: string
+          slug?: string
         }
         Relationships: []
       }
