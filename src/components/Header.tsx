@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
-import { HeartPulse, Menu, X, Globe } from "lucide-react";
-import { useState } from "react";
-import { useLanguage } from "@/hooks/useLanguage";
+import { HeartPulse, Menu, X, Globe, Check, ChevronDown } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { useLanguage, LANGUAGES, type Language } from "@/hooks/useLanguage";
 
 const navLinks = {
   en: [
@@ -55,13 +55,13 @@ export function Header() {
 
         {/* Actions */}
         <div className="hidden md:flex items-center gap-2">
-          <button
-            onClick={toggleLanguage}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-background px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
-          >
-            <Globe className="h-4 w-4" />
-            {language === "en" ? "العربية" : "English"}
-          </button>
+          <LanguageDropdown
+            language={language}
+            setLanguage={setLanguage}
+            currentLabel={currentLang.nativeLabel}
+            open={langOpen}
+            setOpen={setLangOpen}
+          />
           <Link
             to="/login"
             className="rounded-lg px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
@@ -101,13 +101,25 @@ export function Header() {
             ))}
           </nav>
           <div className="mt-4 flex flex-col gap-2 border-t border-border pt-4">
-            <button
-              onClick={toggleLanguage}
-              className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-border bg-background px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent"
-            >
-              <Globe className="h-4 w-4" />
-              {language === "en" ? "العربية" : "English"}
-            </button>
+            <div className="grid grid-cols-2 gap-1 max-h-64 overflow-y-auto rounded-lg border border-border p-1">
+              {LANGUAGES.map((l) => (
+                <button
+                  key={l.code}
+                  onClick={() => {
+                    setLanguage(l.code);
+                    setMobileOpen(false);
+                  }}
+                  className={`flex items-center justify-between gap-2 rounded-md px-3 py-2 text-sm transition-colors ${
+                    l.code === language
+                      ? "bg-primary/10 text-primary font-medium"
+                      : "text-muted-foreground hover:bg-accent"
+                  }`}
+                >
+                  <span>{l.nativeLabel}</span>
+                  {l.code === language && <Check className="h-3.5 w-3.5" />}
+                </button>
+              ))}
+            </div>
             <Link
               to="/login"
               onClick={() => setMobileOpen(false)}
