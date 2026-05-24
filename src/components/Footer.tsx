@@ -65,7 +65,7 @@ const footerContent = {
 
 export function Footer() {
   const { language } = useLanguage();
-  const content = footerContent[language];
+  const content = (footerContent as Record<string, typeof footerContent.en>)[language] ?? footerContent.en;
   const isRTL = language === "ar";
 
   return (
