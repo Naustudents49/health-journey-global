@@ -88,7 +88,7 @@ function HeroSection({ t, isRTL }: { t: (en: string, ar: string) => string; isRT
               >
                 {t("Join as Doctor", "انضم كطبيب")}
               </Link>
-            </<div>
+            </div>
             {/* Trust badges */}
             <div className="mt-10 flex flex-wrap items-center gap-6">
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -139,7 +139,7 @@ function HeroSection({ t, isRTL }: { t: (en: string, ar: string) => string; isRT
                     <p className="mt-1 text-xs text-muted-foreground">{t("Online", "أونلاين")}</p>
                   </div>
                 </div>
-              </<div>
+              </div>
 
               {/* Floating stats card */}
               <div className="absolute -bottom-4 -left-4 rounded-xl bg-card p-4 shadow-lg">
