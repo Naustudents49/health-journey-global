@@ -20,10 +20,11 @@ const navLinks = {
 
 export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { language, toggleLanguage, t } = useLanguage();
+  const [langOpen, setLangOpen] = useState(false);
+  const { language, setLanguage, t } = useLanguage();
 
-  const links = navLinks[language];
-  const isRTL = language === "ar";
+  const links = (navLinks as Record<string, typeof navLinks.en>)[language] ?? navLinks.en;
+  const currentLang = LANGUAGES.find((l) => l.code === language) ?? LANGUAGES[0];
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-md">
