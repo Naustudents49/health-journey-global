@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { HeartPulse, Menu, X, Globe, Check, ChevronDown, User, LogOut } from "lucide-react";
+import { HeartPulse, Menu, X, Globe, Check, ChevronDown, User, LogOut, Calendar } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useLanguage, LANGUAGES, type Language } from "@/hooks/useLanguage";
 import { useAuth } from "@/hooks/useAuth";
