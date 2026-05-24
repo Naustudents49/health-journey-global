@@ -279,6 +279,14 @@ function UserMenu({
             <User className="h-4 w-4" />
             {t("Profile", "الملف الشخصي")}
           </Link>
+          <Link
+            to="/appointments"
+            onClick={() => setOpen(false)}
+            className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-foreground transition-colors hover:bg-accent"
+          >
+            <Calendar className="h-4 w-4" />
+            {t("My Appointments", "مواعيدي")}
+          </Link>
           <button
             onClick={() => {
               signOut();
