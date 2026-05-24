@@ -1,7 +1,8 @@
 import { Link } from "@tanstack/react-router";
-import { HeartPulse, Menu, X, Globe, Check, ChevronDown } from "lucide-react";
+import { HeartPulse, Menu, X, Globe, Check, ChevronDown, User, LogOut } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useLanguage, LANGUAGES, type Language } from "@/hooks/useLanguage";
+import { useAuth } from "@/hooks/useAuth";
 
 const navLinks = {
   en: [
@@ -22,9 +23,10 @@ export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
   const { language, setLanguage, t } = useLanguage();
+  const { user, isAuthenticated, signOut } = useAuth();
 
   const links = (navLinks as Record<string, typeof navLinks.en>)[language] ?? navLinks.en;
-  const currentLang = LANGUAGES.find((l) => l.code === language) ?? LANGUAGES[0];
+  const currentLang = LANGUAGES.find((l) => l.code === language) ?? LANGUAGES[1];
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-md">
@@ -62,18 +64,25 @@ export function Header() {
             open={langOpen}
             setOpen={setLangOpen}
           />
-          <Link
-            to="/login"
-            className="rounded-lg px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
-          >
-            {t("Sign In", "تسجيل الدخول")}
-          </Link>
-          <Link
-            to="/signup"
-            className="inline-flex items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-          >
-            {t("Get Started", "ابدأ الآن")}
-          </Link>
+
+          {isAuthenticated ? (
+            <UserMenu user={user} signOut={signOut} t={t} />
+          ) : (
+            <>
+              <Link
+                to="/login"
+                className="rounded-lg px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+              >
+                {t("Sign In", "تسجيل الدخول")}
+              </Link>
+              <Link
+                to="/signup"
+                className="inline-flex items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+              >
+                {t("Get Started", "ابدأ الآن")}
+              </Link>
+            </>
+          )}
         </div>
 
         {/* Mobile Menu Button */}
@@ -120,20 +129,46 @@ export function Header() {
                 </button>
               ))}
             </div>
-            <Link
-              to="/login"
-              onClick={() => setMobileOpen(false)}
-              className="rounded-lg px-4 py-2 text-center text-sm font-medium text-muted-foreground transition-colors hover:bg-accent"
-            >
-              {t("Sign In", "تسجيل الدخول")}
-            </Link>
-            <Link
-              to="/signup"
-              onClick={() => setMobileOpen(false)}
-              className="inline-flex items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-            >
-              {t("Get Started", "ابدأ الآن")}
-            </Link>
+
+            {isAuthenticated ? (
+              <>
+                <div className="flex items-center gap-2 px-3 py-2">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
+                    <User className="h-4 w-4 text-primary" />
+                  </div>
+                  <span className="text-sm font-medium text-foreground">
+                    {user?.email}
+                  </span>
+                </div>
+                <button
+                  onClick={() => {
+                    signOut();
+                    setMobileOpen(false);
+                  }}
+                  className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-destructive transition-colors hover:bg-destructive/10"
+                >
+                  <LogOut className="h-4 w-4" />
+                  {t("Sign Out", "تسجيل الخروج")}
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  onClick={() => setMobileOpen(false)}
+                  className="rounded-lg px-4 py-2 text-center text-sm font-medium text-muted-foreground transition-colors hover:bg-accent"
+                >
+                  {t("Sign In", "تسجيل الدخول")}
+                </Link>
+                <Link
+                  to="/signup"
+                  onClick={() => setMobileOpen(false)}
+                  className="inline-flex items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+                >
+                  {t("Get Started", "ابدأ الآن")}
+                </Link>
+              </>
+            )}
           </div>
         </div>
       )}
@@ -196,6 +231,64 @@ function LanguageDropdown({
               {l.code === language && <Check className="h-4 w-4" />}
             </button>
           ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function UserMenu({
+  user,
+  signOut,
+  t,
+}: {
+  user: { email?: string } | null;
+  signOut: () => Promise<void>;
+  t: (en: string, ar: string) => string;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function onClick(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    if (open) document.addEventListener("mousedown", onClick);
+    return () => document.removeEventListener("mousedown", onClick);
+  }, [open]);
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        onClick={() => setOpen(!open)}
+        className="inline-flex items-center gap-2 rounded-lg border border-border bg-background px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+      >
+        <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10">
+          <User className="h-3.5 w-3.5 text-primary" />
+        </div>
+        <span className="max-w-[120px] truncate">{user?.email}</span>
+        <ChevronDown className="h-3.5 w-3.5 opacity-60" />
+      </button>
+      {open && (
+        <div className="absolute end-0 mt-2 w-48 rounded-xl border border-border bg-popover p-1 shadow-lg z-50">
+          <Link
+            to="/profile"
+            onClick={() => setOpen(false)}
+            className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-foreground transition-colors hover:bg-accent"
+          >
+            <User className="h-4 w-4" />
+            {t("Profile", "الملف الشخصي")}
+          </Link>
+          <button
+            onClick={() => {
+              signOut();
+              setOpen(false);
+            }}
+            className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-destructive transition-colors hover:bg-destructive/10"
+          >
+            <LogOut className="h-4 w-4" />
+            {t("Sign Out", "تسجيل الخروج")}
+          </button>
         </div>
       )}
     </div>
