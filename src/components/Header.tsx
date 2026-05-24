@@ -140,3 +140,64 @@ export function Header() {
     </header>
   );
 }
+
+function LanguageDropdown({
+  language,
+  setLanguage,
+  currentLabel,
+  open,
+  setOpen,
+}: {
+  language: Language;
+  setLanguage: (l: Language) => void;
+  currentLabel: string;
+  open: boolean;
+  setOpen: (v: boolean) => void;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function onClick(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    if (open) document.addEventListener("mousedown", onClick);
+    return () => document.removeEventListener("mousedown", onClick);
+  }, [open, setOpen]);
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        onClick={() => setOpen(!open)}
+        className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-background px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+      >
+        <Globe className="h-4 w-4" />
+        <span>{currentLabel}</span>
+        <ChevronDown className="h-3.5 w-3.5 opacity-60" />
+      </button>
+      {open && (
+        <div className="absolute end-0 mt-2 w-56 max-h-80 overflow-y-auto rounded-xl border border-border bg-popover p-1 shadow-lg z-50">
+          {LANGUAGES.map((l) => (
+            <button
+              key={l.code}
+              onClick={() => {
+                setLanguage(l.code);
+                setOpen(false);
+              }}
+              className={`flex w-full items-center justify-between gap-2 rounded-md px-3 py-2 text-sm transition-colors ${
+                l.code === language
+                  ? "bg-primary/10 text-primary font-medium"
+                  : "text-foreground hover:bg-accent"
+              }`}
+            >
+              <span className="flex flex-col items-start">
+                <span>{l.nativeLabel}</span>
+                <span className="text-xs text-muted-foreground">{l.label}</span>
+              </span>
+              {l.code === language && <Check className="h-4 w-4" />}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
