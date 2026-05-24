@@ -111,8 +111,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 });
 
 function RootShell({ children }: { children: React.ReactNode }) {
-  const [lang, setLang] = useState("en");
-  const [dir, setDir] = useState("ltr");
+  const [lang, setLang] = useState("ar");
+  const [dir, setDir] = useState("rtl");
 
   useEffect(() => {
     const stored = localStorage.getItem("tabibi-lang");
