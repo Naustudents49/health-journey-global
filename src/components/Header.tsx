@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { HeartPulse, Menu, X, Globe, Check, ChevronDown, User, LogOut } from "lucide-react";
+import { HeartPulse, Menu, X, Globe, Check, ChevronDown, User, LogOut, Calendar } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useLanguage, LANGUAGES, type Language } from "@/hooks/useLanguage";
 import { useAuth } from "@/hooks/useAuth";
@@ -278,6 +278,14 @@ function UserMenu({
           >
             <User className="h-4 w-4" />
             {t("Profile", "الملف الشخصي")}
+          </Link>
+          <Link
+            to="/appointments"
+            onClick={() => setOpen(false)}
+            className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-foreground transition-colors hover:bg-accent"
+          >
+            <Calendar className="h-4 w-4" />
+            {t("My Appointments", "مواعيدي")}
           </Link>
           <button
             onClick={() => {
