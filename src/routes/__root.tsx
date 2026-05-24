@@ -7,8 +7,11 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 
 import appCss from "../styles.css?url";
+import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 
 function NotFoundComponent() {
   return (
@@ -72,19 +75,32 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "Tabibi - Your Health, Connected" },
+      { name: "description", content: "Tabibi connects patients with trusted doctors across the Arab world. Book appointments, consult online, and manage your health records all in one place." },
+      { name: "author", content: "Tabibi" },
+      { property: "og:title", content: "Tabibi - Your Health, Connected" },
+      { property: "og:description", content: "Tabibi connects patients with trusted doctors across the Arab world. Book appointments, consult online, and manage your health records all in one place." },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:site", content: "@tabibi_health" },
     ],
     links: [
       {
         rel: "stylesheet",
         href: appCss,
+      },
+      {
+        rel: "preconnect",
+        href: "https://fonts.googleapis.com",
+      },
+      {
+        rel: "preconnect",
+        href: "https://fonts.gstatic.com",
+        crossOrigin: "anonymous",
+      },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap",
       },
     ],
   }),
@@ -95,8 +111,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 });
 
 function RootShell({ children }: { children: React.ReactNode }) {
+  const [lang, setLang] = useState("en");
+  const [dir, setDir] = useState("ltr");
+
+  useEffect(() => {
+    const stored = localStorage.getItem("tabibi-lang");
+    if (stored) {
+      setLang(stored);
+      setDir(stored === "ar" ? "rtl" : "ltr");
+    }
+  }, []);
+
   return (
-    <html lang="en">
+    <html lang={lang} dir={dir}>
       <head>
         <HeadContent />
       </head>
@@ -113,7 +140,13 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Outlet />
+      <div className="flex min-h-screen flex-col">
+        <Header />
+        <main className="flex-1">
+          <Outlet />
+        </main>
+        <Footer />
+      </div>
     </QueryClientProvider>
   );
 }
