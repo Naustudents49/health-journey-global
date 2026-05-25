@@ -1,3 +1,4 @@
+/// <reference types="google.maps" />
 import { useEffect, useRef, useState } from "react";
 import { useGoogleMaps } from "@/hooks/useGoogleMaps";
 import { Loader2 } from "lucide-react";
