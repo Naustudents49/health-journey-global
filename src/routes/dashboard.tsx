@@ -147,6 +147,11 @@ function DashboardPage() {
       {/* Profile editor */}
       <DoctorProfileEditor details={details} profileId={profile?.id ?? null} />
 
+      {/* Clinics & schedules */}
+      {details?.id && <ClinicsManager doctorDetailsId={details.id} />}
+
+
+
       {/* Pending appointments */}
       <section className="mt-10">
         <h2 className="text-xl font-semibold text-foreground mb-4">
@@ -317,8 +322,23 @@ function DoctorProfileEditor({
     clinic_name: details?.clinic_name ?? "",
     clinic_address: details?.clinic_address ?? "",
     consultation_fee: details?.consultation_fee?.toString() ?? "",
+    currency: details?.currency ?? "EGP",
     years_experience: details?.years_experience?.toString() ?? "",
   });
+
+  useEffect(() => {
+    if (details) {
+      setForm({
+        specialty: details.specialty ?? "",
+        bio: details.bio ?? "",
+        clinic_name: details.clinic_name ?? "",
+        clinic_address: details.clinic_address ?? "",
+        consultation_fee: details.consultation_fee?.toString() ?? "",
+        currency: details.currency ?? "EGP",
+        years_experience: details.years_experience?.toString() ?? "",
+      });
+    }
+  }, [details]);
 
   useEffect(() => {
     if (details) {
