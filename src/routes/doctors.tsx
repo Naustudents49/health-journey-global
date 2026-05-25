@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useCurrency } from "@/hooks/useCurrency";
 import { supabase } from "@/integrations/supabase/client";
 import { Search, MapPin, Star, Stethoscope, BadgeCheck, Loader2 } from "lucide-react";
 
@@ -23,6 +24,7 @@ type DoctorRow = {
   clinic_name: string | null;
   clinic_address: string | null;
   consultation_fee: number | null;
+  currency: string | null;
   years_experience: number | null;
   rating: number | null;
   is_verified: boolean | null;
@@ -188,8 +190,11 @@ function DoctorsPage() {
 
 function DoctorCard({ doctor }: { doctor: DoctorRow }) {
   const { t } = useLanguage();
+  const { formatPrice } = useCurrency();
   const name = doctor.profiles?.full_name ?? t("Doctor", "طبيب");
   const initial = name.charAt(0).toUpperCase();
+  const fee = Number(doctor.consultation_fee ?? 0);
+  const ccy = doctor.currency ?? "EGP";
   return (
     <Link
       to="/doctor/$id"
@@ -219,7 +224,7 @@ function DoctorCard({ doctor }: { doctor: DoctorRow }) {
           <span className="font-medium">{Number(doctor.rating ?? 0).toFixed(1)}</span>
         </div>
         <div className="text-muted-foreground">
-          {doctor.consultation_fee ? `${doctor.consultation_fee} ${t("EGP", "ج.م")}` : t("Free", "مجاناً")}
+          {fee > 0 ? formatPrice(fee, ccy) : t("Free", "مجاناً")}
         </div>
       </div>
     </Link>
