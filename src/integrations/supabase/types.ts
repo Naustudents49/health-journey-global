@@ -56,15 +56,110 @@ export type Database = {
         }
         Relationships: []
       }
+      clinic_schedules: {
+        Row: {
+          clinic_id: string
+          created_at: string
+          day_of_week: number
+          end_time: string
+          id: string
+          slot_duration_minutes: number
+          start_time: string
+        }
+        Insert: {
+          clinic_id: string
+          created_at?: string
+          day_of_week: number
+          end_time: string
+          id?: string
+          slot_duration_minutes?: number
+          start_time: string
+        }
+        Update: {
+          clinic_id?: string
+          created_at?: string
+          day_of_week?: number
+          end_time?: string
+          id?: string
+          slot_duration_minutes?: number
+          start_time?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "clinic_schedules_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      clinics: {
+        Row: {
+          address: string | null
+          city: string | null
+          consultation_fee: number | null
+          country: string | null
+          created_at: string
+          currency: string | null
+          doctor_id: string
+          id: string
+          is_primary: boolean | null
+          lat: number | null
+          lng: number | null
+          name: string
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          city?: string | null
+          consultation_fee?: number | null
+          country?: string | null
+          created_at?: string
+          currency?: string | null
+          doctor_id: string
+          id?: string
+          is_primary?: boolean | null
+          lat?: number | null
+          lng?: number | null
+          name: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          city?: string | null
+          consultation_fee?: number | null
+          country?: string | null
+          created_at?: string
+          currency?: string | null
+          doctor_id?: string
+          id?: string
+          is_primary?: boolean | null
+          lat?: number | null
+          lng?: number | null
+          name?: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       doctor_details: {
         Row: {
+          about_ar: string | null
+          about_en: string | null
           bio: string | null
+          certifications: string[] | null
           clinic_address: string | null
           clinic_name: string | null
           consultation_fee: number | null
           created_at: string
+          currency: string | null
+          education: string | null
           id: string
           is_verified: boolean | null
+          languages: string[] | null
           license_number: string | null
           profile_id: string
           rating: number | null
@@ -74,13 +169,19 @@ export type Database = {
           years_experience: number | null
         }
         Insert: {
+          about_ar?: string | null
+          about_en?: string | null
           bio?: string | null
+          certifications?: string[] | null
           clinic_address?: string | null
           clinic_name?: string | null
           consultation_fee?: number | null
           created_at?: string
+          currency?: string | null
+          education?: string | null
           id?: string
           is_verified?: boolean | null
+          languages?: string[] | null
           license_number?: string | null
           profile_id: string
           rating?: number | null
@@ -90,13 +191,19 @@ export type Database = {
           years_experience?: number | null
         }
         Update: {
+          about_ar?: string | null
+          about_en?: string | null
           bio?: string | null
+          certifications?: string[] | null
           clinic_address?: string | null
           clinic_name?: string | null
           consultation_fee?: number | null
           created_at?: string
+          currency?: string | null
+          education?: string | null
           id?: string
           is_verified?: boolean | null
+          languages?: string[] | null
           license_number?: string | null
           profile_id?: string
           rating?: number | null
@@ -114,6 +221,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      exchange_rates: {
+        Row: {
+          currency_code: string
+          name_ar: string | null
+          name_en: string | null
+          rate_to_usd: number
+          symbol: string | null
+          updated_at: string
+        }
+        Insert: {
+          currency_code: string
+          name_ar?: string | null
+          name_en?: string | null
+          rate_to_usd: number
+          symbol?: string | null
+          updated_at?: string
+        }
+        Update: {
+          currency_code?: string
+          name_ar?: string | null
+          name_en?: string | null
+          rate_to_usd?: number
+          symbol?: string | null
+          updated_at?: string
+        }
+        Relationships: []
       }
       patient_details: {
         Row: {
