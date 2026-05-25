@@ -55,6 +55,28 @@ function DoctorDetailPage() {
     },
   });
 
+  const { data: clinics = [] } = useQuery({
+    queryKey: ["doctor-clinics", id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("clinics")
+        .select("*, clinic_schedules(*)")
+        .eq("doctor_id", id)
+        .order("is_primary", { ascending: false });
+      if (error) throw error;
+      return data as Array<{
+        id: string;
+        name: string;
+        address: string | null;
+        city: string | null;
+        phone: string | null;
+        lat: number | null;
+        lng: number | null;
+        clinic_schedules: Array<{ id: string; day_of_week: number; start_time: string; end_time: string }>;
+      }>;
+    },
+  });
+
   const bookMutation = useMutation({
     mutationFn: async () => {
       if (!user || !profile) throw new Error("Login required");
