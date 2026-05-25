@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/hooks/useLanguage";
 import { supabase } from "@/integrations/supabase/client";
+import { ClinicsManager } from "@/components/dashboard/ClinicsManager";
 import { Loader2, CheckCircle2, XCircle, Calendar, Clock, Users, DollarSign, Stethoscope, Save } from "lucide-react";
 import { toast } from "sonner";
 
@@ -25,11 +26,15 @@ interface DoctorDetails {
   clinic_name: string | null;
   clinic_address: string | null;
   consultation_fee: number | null;
+  currency: string | null;
   years_experience: number | null;
   license_number: string | null;
   is_verified: boolean | null;
   verification_status: string | null;
 }
+
+const CURRENCIES = ["EGP", "USD", "EUR", "SAR", "AED", "KWD", "QAR", "BHD", "OMR", "JOD", "MAD", "TND", "DZD", "GBP"];
+
 
 function DashboardPage() {
   const { t } = useLanguage();
