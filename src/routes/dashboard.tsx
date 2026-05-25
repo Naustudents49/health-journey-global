@@ -340,18 +340,6 @@ function DoctorProfileEditor({
     }
   }, [details]);
 
-  useEffect(() => {
-    if (details) {
-      setForm({
-        specialty: details.specialty ?? "",
-        bio: details.bio ?? "",
-        clinic_name: details.clinic_name ?? "",
-        clinic_address: details.clinic_address ?? "",
-        consultation_fee: details.consultation_fee?.toString() ?? "",
-        years_experience: details.years_experience?.toString() ?? "",
-      });
-    }
-  }, [details]);
 
   const save = useMutation({
     mutationFn: async () => {
@@ -363,6 +351,7 @@ function DoctorProfileEditor({
         clinic_name: form.clinic_name || null,
         clinic_address: form.clinic_address || null,
         consultation_fee: form.consultation_fee ? Number(form.consultation_fee) : null,
+        currency: form.currency || "EGP",
         years_experience: form.years_experience ? Number(form.years_experience) : null,
       };
       if (details?.id) {
