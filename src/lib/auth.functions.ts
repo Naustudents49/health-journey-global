@@ -31,9 +31,16 @@ export const signUpUser = createServerFn({ method: "POST" })
     const { error: profileError } = await supabaseAdmin.from("profiles").insert({
       user_id: userId,
       full_name: data.fullName,
-      phone: data.phone ?? null,
       city: data.city ?? null,
     });
+
+    // Store phone privately in user_contacts
+    if (data.phone) {
+      await supabaseAdmin.from("user_contacts").insert({
+        user_id: userId,
+        phone: data.phone,
+      });
+    }
 
     if (profileError) {
       throw new Error(profileError.message);
