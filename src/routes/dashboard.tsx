@@ -28,7 +28,6 @@ interface DoctorDetails {
   consultation_fee: number | null;
   currency: string | null;
   years_experience: number | null;
-  license_number: string | null;
   is_verified: boolean | null;
   verification_status: string | null;
 }

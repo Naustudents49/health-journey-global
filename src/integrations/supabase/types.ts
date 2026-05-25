@@ -145,6 +145,38 @@ export type Database = {
         }
         Relationships: []
       }
+      doctor_credentials: {
+        Row: {
+          created_at: string
+          doctor_id: string
+          id: string
+          license_number: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          doctor_id: string
+          id?: string
+          license_number?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          doctor_id?: string
+          id?: string
+          license_number?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "doctor_credentials_doctor_id_fkey"
+            columns: ["doctor_id"]
+            isOneToOne: true
+            referencedRelation: "doctor_details"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       doctor_details: {
         Row: {
           about_ar: string | null
@@ -160,7 +192,6 @@ export type Database = {
           id: string
           is_verified: boolean | null
           languages: string[] | null
-          license_number: string | null
           profile_id: string
           rating: number | null
           specialty: string | null
@@ -182,7 +213,6 @@ export type Database = {
           id?: string
           is_verified?: boolean | null
           languages?: string[] | null
-          license_number?: string | null
           profile_id: string
           rating?: number | null
           specialty?: string | null
@@ -204,7 +234,6 @@ export type Database = {
           id?: string
           is_verified?: boolean | null
           languages?: string[] | null
-          license_number?: string | null
           profile_id?: string
           rating?: number | null
           specialty?: string | null
@@ -298,7 +327,6 @@ export type Database = {
           created_at: string
           full_name: string | null
           id: string
-          phone: string | null
           updated_at: string
           user_id: string
         }
@@ -309,7 +337,6 @@ export type Database = {
           created_at?: string
           full_name?: string | null
           id?: string
-          phone?: string | null
           updated_at?: string
           user_id: string
         }
@@ -320,7 +347,6 @@ export type Database = {
           created_at?: string
           full_name?: string | null
           id?: string
-          phone?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -380,6 +406,30 @@ export type Database = {
           name_ar?: string
           name_en?: string
           slug?: string
+        }
+        Relationships: []
+      }
+      user_contacts: {
+        Row: {
+          created_at: string
+          id: string
+          phone: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          phone?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          phone?: string | null
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
