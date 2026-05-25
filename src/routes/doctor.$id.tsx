@@ -25,6 +25,7 @@ function DoctorDetailPage() {
   const { user, profile } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { formatPrice } = useCurrency();
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
   const [appointmentType, setAppointmentType] = useState<"in_person" | "video">("in_person");
