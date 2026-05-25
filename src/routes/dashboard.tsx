@@ -389,14 +389,25 @@ function DoctorProfileEditor({
           />
         </Field>
 
-        <Field label={t("Consultation Fee (EGP)", "سعر الكشف (ج.م)")}>
-          <input
-            type="number"
-            min="0"
-            value={form.consultation_fee}
-            onChange={(e) => setForm({ ...form, consultation_fee: e.target.value })}
-            className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
-          />
+        <Field label={t("Consultation Fee", "سعر الكشف")}>
+          <div className="flex gap-2">
+            <input
+              type="number"
+              min="0"
+              value={form.consultation_fee}
+              onChange={(e) => setForm({ ...form, consultation_fee: e.target.value })}
+              className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+            />
+            <select
+              value={form.currency}
+              onChange={(e) => setForm({ ...form, currency: e.target.value })}
+              className="rounded-lg border border-border bg-background px-2 py-2 text-sm"
+            >
+              {CURRENCIES.map((c) => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
+          </div>
         </Field>
 
         <Field label={t("Years of Experience", "سنوات الخبرة")}>
