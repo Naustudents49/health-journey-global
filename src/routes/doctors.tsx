@@ -24,6 +24,7 @@ type DoctorRow = {
   clinic_name: string | null;
   clinic_address: string | null;
   consultation_fee: number | null;
+  currency: string | null;
   years_experience: number | null;
   rating: number | null;
   is_verified: boolean | null;
