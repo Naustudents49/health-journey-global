@@ -3,8 +3,10 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useAuth } from "@/hooks/useAuth";
+import { useCurrency } from "@/hooks/useCurrency";
 import { supabase } from "@/integrations/supabase/client";
-import { Star, MapPin, BadgeCheck, Calendar, Clock, ArrowLeft, Loader2, MessageSquare, Video, Building2 } from "lucide-react";
+import { ClinicMap } from "@/components/maps/ClinicMap";
+import { Star, MapPin, BadgeCheck, Calendar, Clock, ArrowLeft, Loader2, MessageSquare, Video, Building2, Phone } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/doctor/$id")({
@@ -23,6 +25,7 @@ function DoctorDetailPage() {
   const { user, profile } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { formatPrice } = useCurrency();
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
   const [appointmentType, setAppointmentType] = useState<"in_person" | "video">("in_person");
@@ -50,6 +53,28 @@ function DoctorDetailPage() {
         .order("created_at", { ascending: false });
       if (error) throw error;
       return data;
+    },
+  });
+
+  const { data: clinics = [] } = useQuery({
+    queryKey: ["doctor-clinics", id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("clinics")
+        .select("*, clinic_schedules(*)")
+        .eq("doctor_id", id)
+        .order("is_primary", { ascending: false });
+      if (error) throw error;
+      return data as Array<{
+        id: string;
+        name: string;
+        address: string | null;
+        city: string | null;
+        phone: string | null;
+        lat: number | null;
+        lng: number | null;
+        clinic_schedules: Array<{ id: string; day_of_week: number; start_time: string; end_time: string }>;
+      }>;
     },
   });
 
@@ -166,7 +191,41 @@ function DoctorDetailPage() {
                 </div>
               )}
 
-              {doctor.clinic_name && (
+              {clinics.length > 0 && (
+                <div className="mt-6 pt-6 border-t border-border space-y-5">
+                  <h2 className="font-semibold text-foreground flex items-center gap-2">
+                    <Building2 className="h-4 w-4" /> {t("Clinics & schedule", "العيادات والمواعيد")}
+                  </h2>
+                  {clinics.map((c) => (
+                    <div key={c.id} className="space-y-2">
+                      <div>
+                        <p className="font-medium text-foreground">{c.name}</p>
+                        {c.address && <p className="text-sm text-muted-foreground flex items-center gap-1 mt-0.5"><MapPin className="h-3.5 w-3.5" />{c.address}</p>}
+                        {c.phone && <p className="text-sm text-muted-foreground flex items-center gap-1"><Phone className="h-3.5 w-3.5" />{c.phone}</p>}
+                      </div>
+                      {c.lat != null && c.lng != null && (
+                        <ClinicMap markers={[{ lat: c.lat, lng: c.lng, title: c.name }]} className="h-44" />
+                      )}
+                      {c.clinic_schedules.length > 0 && (
+                        <ul className="text-sm space-y-0.5">
+                          {c.clinic_schedules
+                            .slice()
+                            .sort((a, b) => a.day_of_week - b.day_of_week)
+                            .map((s) => (
+                              <li key={s.id} className="text-muted-foreground">
+                                <span className="font-medium text-foreground">
+                                  {["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][s.day_of_week]}
+                                </span>{" "}
+                                · {s.start_time.slice(0,5)} – {s.end_time.slice(0,5)}
+                              </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+              {clinics.length === 0 && doctor.clinic_name && (
                 <div className="mt-6 pt-6 border-t border-border">
                   <h2 className="font-semibold text-foreground mb-2">{t("Clinic", "العيادة")}</h2>
                   <p className="text-sm text-foreground">{doctor.clinic_name}</p>
@@ -174,6 +233,7 @@ function DoctorDetailPage() {
                 </div>
               )}
             </div>
+
 
             {/* Reviews */}
             <div className="bg-card border border-border rounded-2xl p-6">
@@ -233,7 +293,7 @@ function DoctorDetailPage() {
               <div className="text-center pb-4 border-b border-border">
                 <p className="text-sm text-muted-foreground">{t("Consultation fee", "رسوم الكشف")}</p>
                 <p className="text-2xl font-bold text-primary mt-1">
-                  {doctor.consultation_fee ?? 0} <span className="text-base font-normal">{t("EGP", "ج.م")}</span>
+                  {formatPrice(Number(doctor.consultation_fee ?? 0), doctor.currency ?? "EGP")}
                 </p>
               </div>
 

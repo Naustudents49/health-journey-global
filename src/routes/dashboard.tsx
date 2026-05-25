@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/hooks/useLanguage";
 import { supabase } from "@/integrations/supabase/client";
+import { ClinicsManager } from "@/components/dashboard/ClinicsManager";
 import { Loader2, CheckCircle2, XCircle, Calendar, Clock, Users, DollarSign, Stethoscope, Save } from "lucide-react";
 import { toast } from "sonner";
 
@@ -25,11 +26,15 @@ interface DoctorDetails {
   clinic_name: string | null;
   clinic_address: string | null;
   consultation_fee: number | null;
+  currency: string | null;
   years_experience: number | null;
   license_number: string | null;
   is_verified: boolean | null;
   verification_status: string | null;
 }
+
+const CURRENCIES = ["EGP", "USD", "EUR", "SAR", "AED", "KWD", "QAR", "BHD", "OMR", "JOD", "MAD", "TND", "DZD", "GBP"];
+
 
 function DashboardPage() {
   const { t } = useLanguage();
@@ -141,6 +146,11 @@ function DashboardPage() {
 
       {/* Profile editor */}
       <DoctorProfileEditor details={details} profileId={profile?.id ?? null} />
+
+      {/* Clinics & schedules */}
+      {details?.id && <ClinicsManager doctorDetailsId={details.id} />}
+
+
 
       {/* Pending appointments */}
       <section className="mt-10">
@@ -312,6 +322,7 @@ function DoctorProfileEditor({
     clinic_name: details?.clinic_name ?? "",
     clinic_address: details?.clinic_address ?? "",
     consultation_fee: details?.consultation_fee?.toString() ?? "",
+    currency: details?.currency ?? "EGP",
     years_experience: details?.years_experience?.toString() ?? "",
   });
 
@@ -323,10 +334,12 @@ function DoctorProfileEditor({
         clinic_name: details.clinic_name ?? "",
         clinic_address: details.clinic_address ?? "",
         consultation_fee: details.consultation_fee?.toString() ?? "",
+        currency: details.currency ?? "EGP",
         years_experience: details.years_experience?.toString() ?? "",
       });
     }
   }, [details]);
+
 
   const save = useMutation({
     mutationFn: async () => {
@@ -338,6 +351,7 @@ function DoctorProfileEditor({
         clinic_name: form.clinic_name || null,
         clinic_address: form.clinic_address || null,
         consultation_fee: form.consultation_fee ? Number(form.consultation_fee) : null,
+        currency: form.currency || "EGP",
         years_experience: form.years_experience ? Number(form.years_experience) : null,
       };
       if (details?.id) {
@@ -375,14 +389,25 @@ function DoctorProfileEditor({
           />
         </Field>
 
-        <Field label={t("Consultation Fee (EGP)", "سعر الكشف (ج.م)")}>
-          <input
-            type="number"
-            min="0"
-            value={form.consultation_fee}
-            onChange={(e) => setForm({ ...form, consultation_fee: e.target.value })}
-            className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
-          />
+        <Field label={t("Consultation Fee", "سعر الكشف")}>
+          <div className="flex gap-2">
+            <input
+              type="number"
+              min="0"
+              value={form.consultation_fee}
+              onChange={(e) => setForm({ ...form, consultation_fee: e.target.value })}
+              className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+            />
+            <select
+              value={form.currency}
+              onChange={(e) => setForm({ ...form, currency: e.target.value })}
+              className="rounded-lg border border-border bg-background px-2 py-2 text-sm"
+            >
+              {CURRENCIES.map((c) => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
+          </div>
         </Field>
 
         <Field label={t("Years of Experience", "سنوات الخبرة")}>
