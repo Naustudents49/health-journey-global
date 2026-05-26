@@ -130,6 +130,13 @@ function MissingDrugsPage() {
                   >
                     {t("Back to community", "العودة للمجتمع")}
                   </Link>
+                  <Link
+                    to="/pharmacy/register"
+                    className="inline-flex items-center gap-1.5 rounded-xl border border-teal/30 bg-teal/10 px-4 py-2 text-sm font-medium text-teal transition-colors hover:bg-teal/15"
+                  >
+                    <Building2 className="h-4 w-4" />
+                    {t("Are you a pharmacy?", "هل تمتلك صيدلية؟")}
+                  </Link>
                 </div>
               </div>
             </div>
