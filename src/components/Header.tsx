@@ -287,6 +287,16 @@ function UserMenu({
               {t("Dashboard", "لوحة التحكم")}
             </Link>
           )}
+          {role === "pharmacy" && (
+            <Link
+              to="/pharmacy/dashboard"
+              onClick={() => setOpen(false)}
+              className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-foreground transition-colors hover:bg-accent"
+            >
+              <LayoutDashboard className="h-4 w-4" />
+              {t("Pharmacy Dashboard", "لوحة الصيدلية")}
+            </Link>
+          )}
           <Link
             to="/profile"
             onClick={() => setOpen(false)}
