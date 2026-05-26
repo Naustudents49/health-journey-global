@@ -1,13 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { Pill, Search, MapPin, Plus, Loader2, Filter } from "lucide-react";
+import { Pill, Search, MapPin, Plus, Loader2, Filter, Building2 } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { PostCard } from "@/components/feed/PostCard";
+import { ListingCard } from "@/components/pharmacy/ListingCard";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useGoogleMaps } from "@/hooks/useGoogleMaps";
 import { listPosts, reverseGeocodeCity } from "@/lib/feed";
+import { listDrugListings } from "@/lib/pharmacy";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/missing-drugs")({
@@ -46,6 +48,16 @@ function MissingDrugsPage() {
         city: city.trim() || undefined,
         resolved,
         limit: 80,
+      }),
+  });
+
+  const { data: pharmacyListings } = useQuery({
+    queryKey: ["pharmacy-listings", { drugName, city }],
+    queryFn: () =>
+      listDrugListings({
+        drugName: drugName.trim() || undefined,
+        city: city.trim() || undefined,
+        limit: 30,
       }),
   });
 

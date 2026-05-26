@@ -24,6 +24,8 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AppointmentsRouteImport } from './routes/appointments'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PharmacyRegisterRouteImport } from './routes/pharmacy.register'
+import { Route as PharmacyDashboardRouteImport } from './routes/pharmacy.dashboard'
 import { Route as FeedNewRouteImport } from './routes/feed.new'
 import { Route as DoctorIdRouteImport } from './routes/doctor.$id'
 import { Route as ConsultationIdRouteImport } from './routes/consultation.$id'
@@ -104,6 +106,16 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PharmacyRegisterRoute = PharmacyRegisterRouteImport.update({
+  id: '/pharmacy/register',
+  path: '/pharmacy/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PharmacyDashboardRoute = PharmacyDashboardRouteImport.update({
+  id: '/pharmacy/dashboard',
+  path: '/pharmacy/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FeedNewRoute = FeedNewRouteImport.update({
   id: '/new',
   path: '/new',
@@ -144,6 +156,8 @@ export interface FileRoutesByFullPath {
   '/consultation/$id': typeof ConsultationIdRoute
   '/doctor/$id': typeof DoctorIdRoute
   '/feed/new': typeof FeedNewRoute
+  '/pharmacy/dashboard': typeof PharmacyDashboardRoute
+  '/pharmacy/register': typeof PharmacyRegisterRoute
   '/feed/post/$id': typeof FeedPostIdRoute
 }
 export interface FileRoutesByTo {
@@ -165,6 +179,8 @@ export interface FileRoutesByTo {
   '/consultation/$id': typeof ConsultationIdRoute
   '/doctor/$id': typeof DoctorIdRoute
   '/feed/new': typeof FeedNewRoute
+  '/pharmacy/dashboard': typeof PharmacyDashboardRoute
+  '/pharmacy/register': typeof PharmacyRegisterRoute
   '/feed/post/$id': typeof FeedPostIdRoute
 }
 export interface FileRoutesById {
@@ -187,6 +203,8 @@ export interface FileRoutesById {
   '/consultation/$id': typeof ConsultationIdRoute
   '/doctor/$id': typeof DoctorIdRoute
   '/feed/new': typeof FeedNewRoute
+  '/pharmacy/dashboard': typeof PharmacyDashboardRoute
+  '/pharmacy/register': typeof PharmacyRegisterRoute
   '/feed/post/$id': typeof FeedPostIdRoute
 }
 export interface FileRouteTypes {
@@ -210,6 +228,8 @@ export interface FileRouteTypes {
     | '/consultation/$id'
     | '/doctor/$id'
     | '/feed/new'
+    | '/pharmacy/dashboard'
+    | '/pharmacy/register'
     | '/feed/post/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -231,6 +251,8 @@ export interface FileRouteTypes {
     | '/consultation/$id'
     | '/doctor/$id'
     | '/feed/new'
+    | '/pharmacy/dashboard'
+    | '/pharmacy/register'
     | '/feed/post/$id'
   id:
     | '__root__'
@@ -252,6 +274,8 @@ export interface FileRouteTypes {
     | '/consultation/$id'
     | '/doctor/$id'
     | '/feed/new'
+    | '/pharmacy/dashboard'
+    | '/pharmacy/register'
     | '/feed/post/$id'
   fileRoutesById: FileRoutesById
 }
@@ -273,6 +297,8 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   ConsultationIdRoute: typeof ConsultationIdRoute
   DoctorIdRoute: typeof DoctorIdRoute
+  PharmacyDashboardRoute: typeof PharmacyDashboardRoute
+  PharmacyRegisterRoute: typeof PharmacyRegisterRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -382,6 +408,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/pharmacy/register': {
+      id: '/pharmacy/register'
+      path: '/pharmacy/register'
+      fullPath: '/pharmacy/register'
+      preLoaderRoute: typeof PharmacyRegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pharmacy/dashboard': {
+      id: '/pharmacy/dashboard'
+      path: '/pharmacy/dashboard'
+      fullPath: '/pharmacy/dashboard'
+      preLoaderRoute: typeof PharmacyDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/feed/new': {
       id: '/feed/new'
       path: '/new'
@@ -443,6 +483,8 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   ConsultationIdRoute: ConsultationIdRoute,
   DoctorIdRoute: DoctorIdRoute,
+  PharmacyDashboardRoute: PharmacyDashboardRoute,
+  PharmacyRegisterRoute: PharmacyRegisterRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
