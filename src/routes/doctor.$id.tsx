@@ -34,6 +34,7 @@ function DoctorDetailPage() {
   const [notes, setNotes] = useState("");
   const [reviewRating, setReviewRating] = useState(5);
   const [reviewText, setReviewText] = useState("");
+  const [consentOpen, setConsentOpen] = useState(false);
 
   const { data: doctor, isLoading } = useQuery({
     queryKey: ["doctor", id],
