@@ -212,45 +212,61 @@ function MissingDrugsPage() {
         </section>
 
         {/* Results */}
-        <section className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-8">
-          {isLoading ? (
-            <div className="flex justify-center py-16">
-              <Loader2 className="h-6 w-6 animate-spin text-primary" />
-            </div>
-          ) : !posts || posts.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-border bg-card/30 p-12 text-center">
-              <Pill className="mx-auto h-10 w-10 text-muted-foreground" />
-              <h3 className="mt-4 text-lg font-semibold text-foreground">
-                {t("No missing-drug reports match", "لا توجد بلاغات أدوية تطابق البحث")}
-              </h3>
-              <p className="mt-1 text-sm text-muted-foreground">
-                {t(
-                  "Try widening your filters or be the first to report.",
-                  "جرّب توسيع الفلاتر أو كن أول من يُبلِغ.",
-                )}
-              </p>
-              <Link
-                to="/feed/new"
-                className="mt-5 inline-flex items-center gap-2 rounded-xl bg-rose-600 px-4 py-2 text-sm font-semibold text-white hover:bg-rose-700"
-              >
-                <Plus className="h-4 w-4" />
-                {t("Report a drug", "أبلِغ عن دواء")}
-              </Link>
-            </div>
-          ) : (
-            <>
-              <div className="mb-4 text-sm text-muted-foreground">
-                {language === "ar"
-                  ? `${posts.length} نتيجة`
-                  : `${posts.length} result${posts.length === 1 ? "" : "s"}`}
+        <section className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+          {pharmacyListings && pharmacyListings.length > 0 && (
+            <div>
+              <div className="mb-4 flex items-center gap-2">
+                <Building2 className="h-5 w-5 text-teal" />
+                <h2 className="text-lg font-bold text-foreground">
+                  {t("Available now at verified pharmacies", "متوفر الآن في صيدليات موثّقة")}
+                </h2>
+                <span className="rounded-full bg-teal/15 px-2 py-0.5 text-xs font-semibold text-teal">
+                  {pharmacyListings.length}
+                </span>
               </div>
-              <div className="space-y-4">
-                {posts.map((p) => (
-                  <PostCard key={p.id} post={p} />
+              <div className="grid gap-4 md:grid-cols-2">
+                {pharmacyListings.map((l) => (
+                  <ListingCard key={l.id} listing={l} />
                 ))}
               </div>
-            </>
+            </div>
           )}
+
+          <div>
+            {(pharmacyListings?.length ?? 0) > 0 && (
+              <h2 className="mb-4 text-lg font-bold text-foreground">
+                {t("Community reports", "بلاغات المجتمع")}
+              </h2>
+            )}
+            {isLoading ? (
+              <div className="flex justify-center py-16">
+                <Loader2 className="h-6 w-6 animate-spin text-primary" />
+              </div>
+            ) : !posts || posts.length === 0 ? (
+              <div className="rounded-2xl border border-dashed border-border bg-card/30 p-12 text-center">
+                <Pill className="mx-auto h-10 w-10 text-muted-foreground" />
+                <h3 className="mt-4 text-lg font-semibold text-foreground">
+                  {t("No missing-drug reports match", "لا توجد بلاغات أدوية تطابق البحث")}
+                </h3>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {t("Try widening your filters or be the first to report.", "جرّب توسيع الفلاتر أو كن أول من يُبلِغ.")}
+                </p>
+                <Link to="/feed/new" className="mt-5 inline-flex items-center gap-2 rounded-xl bg-rose-600 px-4 py-2 text-sm font-semibold text-white hover:bg-rose-700">
+                  <Plus className="h-4 w-4" />
+                  {t("Report a drug", "أبلِغ عن دواء")}
+                </Link>
+              </div>
+            ) : (
+              <>
+                <div className="mb-4 text-sm text-muted-foreground">
+                  {language === "ar" ? `${posts.length} نتيجة` : `${posts.length} result${posts.length === 1 ? "" : "s"}`}
+                </div>
+                <div className="space-y-4">
+                  {posts.map((p) => <PostCard key={p.id} post={p} />)}
+                </div>
+              </>
+            )}
+          </div>
         </section>
       </main>
 
