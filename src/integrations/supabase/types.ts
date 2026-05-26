@@ -319,6 +319,189 @@ export type Database = {
           },
         ]
       }
+      pharmacy_branches: {
+        Row: {
+          address: string | null
+          chain_id: string
+          city: string | null
+          country: string | null
+          created_at: string
+          id: string
+          is_active: boolean
+          lat: number | null
+          lng: number | null
+          name: string
+          phone: string | null
+          updated_at: string
+          working_hours: Json | null
+        }
+        Insert: {
+          address?: string | null
+          chain_id: string
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          lat?: number | null
+          lng?: number | null
+          name: string
+          phone?: string | null
+          updated_at?: string
+          working_hours?: Json | null
+        }
+        Update: {
+          address?: string | null
+          chain_id?: string
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          lat?: number | null
+          lng?: number | null
+          name?: string
+          phone?: string | null
+          updated_at?: string
+          working_hours?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pharmacy_branches_chain_id_fkey"
+            columns: ["chain_id"]
+            isOneToOne: false
+            referencedRelation: "pharmacy_chains"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pharmacy_chains: {
+        Row: {
+          created_at: string
+          description: string | null
+          description_ar: string | null
+          id: string
+          is_verified: boolean
+          license_number: string | null
+          logo_url: string | null
+          name: string
+          name_ar: string | null
+          owner_user_id: string
+          slug: string
+          updated_at: string
+          verification_status: string
+          website: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          description_ar?: string | null
+          id?: string
+          is_verified?: boolean
+          license_number?: string | null
+          logo_url?: string | null
+          name: string
+          name_ar?: string | null
+          owner_user_id: string
+          slug: string
+          updated_at?: string
+          verification_status?: string
+          website?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          description_ar?: string | null
+          id?: string
+          is_verified?: boolean
+          license_number?: string | null
+          logo_url?: string | null
+          name?: string
+          name_ar?: string | null
+          owner_user_id?: string
+          slug?: string
+          updated_at?: string
+          verification_status?: string
+          website?: string | null
+        }
+        Relationships: []
+      }
+      pharmacy_drug_listings: {
+        Row: {
+          alternative_name: string | null
+          branch_id: string | null
+          chain_id: string
+          created_at: string
+          currency: string | null
+          dosage: string | null
+          drug_name: string
+          expires_at: string | null
+          id: string
+          is_active: boolean
+          linked_post_id: string | null
+          notes: string | null
+          price: number | null
+          stock_status: string
+          updated_at: string
+        }
+        Insert: {
+          alternative_name?: string | null
+          branch_id?: string | null
+          chain_id: string
+          created_at?: string
+          currency?: string | null
+          dosage?: string | null
+          drug_name: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          linked_post_id?: string | null
+          notes?: string | null
+          price?: number | null
+          stock_status?: string
+          updated_at?: string
+        }
+        Update: {
+          alternative_name?: string | null
+          branch_id?: string | null
+          chain_id?: string
+          created_at?: string
+          currency?: string | null
+          dosage?: string | null
+          drug_name?: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          linked_post_id?: string | null
+          notes?: string | null
+          price?: number | null
+          stock_status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pharmacy_drug_listings_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "pharmacy_branches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pharmacy_drug_listings_chain_id_fkey"
+            columns: ["chain_id"]
+            isOneToOne: false
+            referencedRelation: "pharmacy_chains"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pharmacy_drug_listings_linked_post_id_fkey"
+            columns: ["linked_post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       post_drug_info: {
         Row: {
           alternative_suggested: string | null
@@ -713,7 +896,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "admin" | "doctor" | "patient"
+      app_role: "admin" | "doctor" | "patient" | "pharmacy"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -841,7 +1024,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "doctor", "patient"],
+      app_role: ["admin", "doctor", "patient", "pharmacy"],
     },
   },
 } as const
