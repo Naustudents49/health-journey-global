@@ -17,42 +17,101 @@ export type Database = {
       appointments: {
         Row: {
           appointment_type: string
+          commission_cents: number | null
+          consultation_fee_cents: number | null
           created_at: string
           doctor_id: string
           duration_minutes: number
           fee: number
           id: string
+          invoice_id: string | null
           notes: string | null
+          patient_consent_accepted: boolean
           patient_id: string
+          payment_status: string
           scheduled_at: string
           status: string
           updated_at: string
         }
         Insert: {
           appointment_type?: string
+          commission_cents?: number | null
+          consultation_fee_cents?: number | null
           created_at?: string
           doctor_id: string
           duration_minutes?: number
           fee?: number
           id?: string
+          invoice_id?: string | null
           notes?: string | null
+          patient_consent_accepted?: boolean
           patient_id: string
+          payment_status?: string
           scheduled_at: string
           status?: string
           updated_at?: string
         }
         Update: {
           appointment_type?: string
+          commission_cents?: number | null
+          consultation_fee_cents?: number | null
           created_at?: string
           doctor_id?: string
           duration_minutes?: number
           fee?: number
           id?: string
+          invoice_id?: string | null
           notes?: string | null
+          patient_consent_accepted?: boolean
           patient_id?: string
+          payment_status?: string
           scheduled_at?: string
           status?: string
           updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "appointments_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      audit_logs: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          ip_address: string | null
+          metadata: Json | null
+          resource_id: string | null
+          resource_type: string
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          resource_id?: string | null
+          resource_type: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          resource_id?: string | null
+          resource_type?: string
+          user_agent?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -145,6 +204,51 @@ export type Database = {
         }
         Relationships: []
       }
+      doctor_consent: {
+        Row: {
+          created_at: string
+          data_protection_law_accepted: boolean
+          data_protection_law_signed_at: string | null
+          doctor_id: string
+          electronic_billing_accepted: boolean
+          electronic_billing_signed_at: string | null
+          id: string
+          ip_address: string | null
+          telemedicine_2023_accepted: boolean
+          telemedicine_2023_signed_at: string | null
+          updated_at: string
+          user_agent: string | null
+        }
+        Insert: {
+          created_at?: string
+          data_protection_law_accepted?: boolean
+          data_protection_law_signed_at?: string | null
+          doctor_id: string
+          electronic_billing_accepted?: boolean
+          electronic_billing_signed_at?: string | null
+          id?: string
+          ip_address?: string | null
+          telemedicine_2023_accepted?: boolean
+          telemedicine_2023_signed_at?: string | null
+          updated_at?: string
+          user_agent?: string | null
+        }
+        Update: {
+          created_at?: string
+          data_protection_law_accepted?: boolean
+          data_protection_law_signed_at?: string | null
+          doctor_id?: string
+          electronic_billing_accepted?: boolean
+          electronic_billing_signed_at?: string | null
+          id?: string
+          ip_address?: string | null
+          telemedicine_2023_accepted?: boolean
+          telemedicine_2023_signed_at?: string | null
+          updated_at?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       doctor_credentials: {
         Row: {
           created_at: string
@@ -190,11 +294,16 @@ export type Database = {
           currency: string | null
           education: string | null
           id: string
+          is_pro: boolean
           is_verified: boolean | null
           languages: string[] | null
+          national_id_last4: string | null
+          pro_plus_active: boolean
           profile_id: string
           rating: number | null
           specialty: string | null
+          syndicate_number: string | null
+          telemedicine_enabled: boolean
           updated_at: string
           verification_status: string | null
           years_experience: number | null
@@ -211,11 +320,16 @@ export type Database = {
           currency?: string | null
           education?: string | null
           id?: string
+          is_pro?: boolean
           is_verified?: boolean | null
           languages?: string[] | null
+          national_id_last4?: string | null
+          pro_plus_active?: boolean
           profile_id: string
           rating?: number | null
           specialty?: string | null
+          syndicate_number?: string | null
+          telemedicine_enabled?: boolean
           updated_at?: string
           verification_status?: string | null
           years_experience?: number | null
@@ -232,11 +346,16 @@ export type Database = {
           currency?: string | null
           education?: string | null
           id?: string
+          is_pro?: boolean
           is_verified?: boolean | null
           languages?: string[] | null
+          national_id_last4?: string | null
+          pro_plus_active?: boolean
           profile_id?: string
           rating?: number | null
           specialty?: string | null
+          syndicate_number?: string | null
+          telemedicine_enabled?: boolean
           updated_at?: string
           verification_status?: string | null
           years_experience?: number | null
@@ -278,6 +397,101 @@ export type Database = {
         }
         Relationships: []
       }
+      invoices: {
+        Row: {
+          amount_cents: number
+          appointment_id: string | null
+          commission_cents: number
+          created_at: string
+          currency: string
+          customer_name: string | null
+          customer_tax_id: string | null
+          description: string | null
+          doctor_profile_id: string | null
+          environment: string
+          eta_payload: Json | null
+          eta_status: string | null
+          eta_submission_uuid: string | null
+          id: string
+          issued_at: string | null
+          net_cents: number
+          number: number
+          paid_at: string | null
+          pdf_url: string | null
+          seller_name: string | null
+          seller_tax_id: string | null
+          status: string
+          subscription_id: string | null
+          tax_cents: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount_cents: number
+          appointment_id?: string | null
+          commission_cents?: number
+          created_at?: string
+          currency?: string
+          customer_name?: string | null
+          customer_tax_id?: string | null
+          description?: string | null
+          doctor_profile_id?: string | null
+          environment?: string
+          eta_payload?: Json | null
+          eta_status?: string | null
+          eta_submission_uuid?: string | null
+          id?: string
+          issued_at?: string | null
+          net_cents?: number
+          number?: number
+          paid_at?: string | null
+          pdf_url?: string | null
+          seller_name?: string | null
+          seller_tax_id?: string | null
+          status?: string
+          subscription_id?: string | null
+          tax_cents?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount_cents?: number
+          appointment_id?: string | null
+          commission_cents?: number
+          created_at?: string
+          currency?: string
+          customer_name?: string | null
+          customer_tax_id?: string | null
+          description?: string | null
+          doctor_profile_id?: string | null
+          environment?: string
+          eta_payload?: Json | null
+          eta_status?: string | null
+          eta_submission_uuid?: string | null
+          id?: string
+          issued_at?: string | null
+          net_cents?: number
+          number?: number
+          paid_at?: string | null
+          pdf_url?: string | null
+          seller_name?: string | null
+          seller_tax_id?: string | null
+          status?: string
+          subscription_id?: string | null
+          tax_cents?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoices_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "subscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       patient_details: {
         Row: {
           allergies: string[] | null
@@ -315,6 +529,65 @@ export type Database = {
             columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payments: {
+        Row: {
+          amount_cents: number
+          created_at: string
+          currency: string
+          environment: string
+          id: string
+          invoice_id: string | null
+          paid_at: string | null
+          provider: string
+          provider_payment_id: string | null
+          provider_session_id: string | null
+          raw_payload: Json | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount_cents: number
+          created_at?: string
+          currency?: string
+          environment?: string
+          id?: string
+          invoice_id?: string | null
+          paid_at?: string | null
+          provider?: string
+          provider_payment_id?: string | null
+          provider_session_id?: string | null
+          raw_payload?: Json | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount_cents?: number
+          created_at?: string
+          currency?: string
+          environment?: string
+          id?: string
+          invoice_id?: string | null
+          paid_at?: string | null
+          provider?: string
+          provider_payment_id?: string | null
+          provider_session_id?: string | null
+          raw_payload?: Json | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
             referencedColumns: ["id"]
           },
         ]
@@ -840,6 +1113,111 @@ export type Database = {
         }
         Relationships: []
       }
+      subscription_plans: {
+        Row: {
+          code: string
+          created_at: string
+          currency: string
+          description_ar: string | null
+          description_en: string | null
+          features: Json
+          id: string
+          interval: string
+          is_active: boolean
+          name_ar: string
+          name_en: string
+          price_cents: number
+          sort_order: number
+          stripe_price_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          currency?: string
+          description_ar?: string | null
+          description_en?: string | null
+          features?: Json
+          id?: string
+          interval?: string
+          is_active?: boolean
+          name_ar: string
+          name_en: string
+          price_cents: number
+          sort_order?: number
+          stripe_price_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          currency?: string
+          description_ar?: string | null
+          description_en?: string | null
+          features?: Json
+          id?: string
+          interval?: string
+          is_active?: boolean
+          name_ar?: string
+          name_en?: string
+          price_cents?: number
+          sort_order?: number
+          stripe_price_id?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      subscriptions: {
+        Row: {
+          cancel_at_period_end: boolean | null
+          created_at: string
+          current_period_end: string | null
+          current_period_start: string | null
+          environment: string
+          id: string
+          plan_code: string | null
+          price_id: string
+          product_id: string | null
+          status: string
+          stripe_customer_id: string
+          stripe_subscription_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          cancel_at_period_end?: boolean | null
+          created_at?: string
+          current_period_end?: string | null
+          current_period_start?: string | null
+          environment?: string
+          id?: string
+          plan_code?: string | null
+          price_id: string
+          product_id?: string | null
+          status?: string
+          stripe_customer_id: string
+          stripe_subscription_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          cancel_at_period_end?: boolean | null
+          created_at?: string
+          current_period_end?: string | null
+          current_period_start?: string | null
+          environment?: string
+          id?: string
+          plan_code?: string | null
+          price_id?: string
+          product_id?: string | null
+          status?: string
+          stripe_customer_id?: string
+          stripe_subscription_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_contacts: {
         Row: {
           created_at: string
@@ -890,6 +1268,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      has_active_subscription: {
+        Args: { check_env?: string; user_uuid: string }
+        Returns: boolean
+      }
+      has_plan: {
+        Args: { check_env?: string; plan: string; user_uuid: string }
+        Returns: boolean
+      }
       is_verified_doctor_profile: {
         Args: { _profile_id: string }
         Returns: boolean
