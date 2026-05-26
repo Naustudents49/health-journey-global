@@ -13,6 +13,7 @@ import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as MissingDrugsRouteImport } from './routes/missing-drugs'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as JoinDoctorRouteImport } from './routes/join-doctor'
@@ -29,7 +30,9 @@ import { Route as PharmacyDashboardRouteImport } from './routes/pharmacy.dashboa
 import { Route as FeedNewRouteImport } from './routes/feed.new'
 import { Route as DoctorIdRouteImport } from './routes/doctor.$id'
 import { Route as ConsultationIdRouteImport } from './routes/consultation.$id'
+import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
 import { Route as FeedPostIdRouteImport } from './routes/feed.post.$id'
+import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
@@ -49,6 +52,11 @@ const ProfileRoute = ProfileRouteImport.update({
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MissingDrugsRoute = MissingDrugsRouteImport.update({
@@ -131,11 +139,22 @@ const ConsultationIdRoute = ConsultationIdRouteImport.update({
   path: '/consultation/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CheckoutReturnRoute = CheckoutReturnRouteImport.update({
+  id: '/checkout/return',
+  path: '/checkout/return',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FeedPostIdRoute = FeedPostIdRouteImport.update({
   id: '/post/$id',
   path: '/post/$id',
   getParentRoute: () => FeedRoute,
 } as any)
+const ApiPublicPaymentsWebhookRoute =
+  ApiPublicPaymentsWebhookRouteImport.update({
+    id: '/api/public/payments/webhook',
+    path: '/api/public/payments/webhook',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -149,16 +168,19 @@ export interface FileRoutesByFullPath {
   '/join-doctor': typeof JoinDoctorRoute
   '/login': typeof LoginRoute
   '/missing-drugs': typeof MissingDrugsRoute
+  '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
   '/signup': typeof SignupRoute
   '/terms': typeof TermsRoute
+  '/checkout/return': typeof CheckoutReturnRoute
   '/consultation/$id': typeof ConsultationIdRoute
   '/doctor/$id': typeof DoctorIdRoute
   '/feed/new': typeof FeedNewRoute
   '/pharmacy/dashboard': typeof PharmacyDashboardRoute
   '/pharmacy/register': typeof PharmacyRegisterRoute
   '/feed/post/$id': typeof FeedPostIdRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -172,16 +194,19 @@ export interface FileRoutesByTo {
   '/join-doctor': typeof JoinDoctorRoute
   '/login': typeof LoginRoute
   '/missing-drugs': typeof MissingDrugsRoute
+  '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
   '/signup': typeof SignupRoute
   '/terms': typeof TermsRoute
+  '/checkout/return': typeof CheckoutReturnRoute
   '/consultation/$id': typeof ConsultationIdRoute
   '/doctor/$id': typeof DoctorIdRoute
   '/feed/new': typeof FeedNewRoute
   '/pharmacy/dashboard': typeof PharmacyDashboardRoute
   '/pharmacy/register': typeof PharmacyRegisterRoute
   '/feed/post/$id': typeof FeedPostIdRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -196,16 +221,19 @@ export interface FileRoutesById {
   '/join-doctor': typeof JoinDoctorRoute
   '/login': typeof LoginRoute
   '/missing-drugs': typeof MissingDrugsRoute
+  '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
   '/signup': typeof SignupRoute
   '/terms': typeof TermsRoute
+  '/checkout/return': typeof CheckoutReturnRoute
   '/consultation/$id': typeof ConsultationIdRoute
   '/doctor/$id': typeof DoctorIdRoute
   '/feed/new': typeof FeedNewRoute
   '/pharmacy/dashboard': typeof PharmacyDashboardRoute
   '/pharmacy/register': typeof PharmacyRegisterRoute
   '/feed/post/$id': typeof FeedPostIdRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -221,16 +249,19 @@ export interface FileRouteTypes {
     | '/join-doctor'
     | '/login'
     | '/missing-drugs'
+    | '/pricing'
     | '/privacy'
     | '/profile'
     | '/signup'
     | '/terms'
+    | '/checkout/return'
     | '/consultation/$id'
     | '/doctor/$id'
     | '/feed/new'
     | '/pharmacy/dashboard'
     | '/pharmacy/register'
     | '/feed/post/$id'
+    | '/api/public/payments/webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -244,16 +275,19 @@ export interface FileRouteTypes {
     | '/join-doctor'
     | '/login'
     | '/missing-drugs'
+    | '/pricing'
     | '/privacy'
     | '/profile'
     | '/signup'
     | '/terms'
+    | '/checkout/return'
     | '/consultation/$id'
     | '/doctor/$id'
     | '/feed/new'
     | '/pharmacy/dashboard'
     | '/pharmacy/register'
     | '/feed/post/$id'
+    | '/api/public/payments/webhook'
   id:
     | '__root__'
     | '/'
@@ -267,16 +301,19 @@ export interface FileRouteTypes {
     | '/join-doctor'
     | '/login'
     | '/missing-drugs'
+    | '/pricing'
     | '/privacy'
     | '/profile'
     | '/signup'
     | '/terms'
+    | '/checkout/return'
     | '/consultation/$id'
     | '/doctor/$id'
     | '/feed/new'
     | '/pharmacy/dashboard'
     | '/pharmacy/register'
     | '/feed/post/$id'
+    | '/api/public/payments/webhook'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -291,14 +328,17 @@ export interface RootRouteChildren {
   JoinDoctorRoute: typeof JoinDoctorRoute
   LoginRoute: typeof LoginRoute
   MissingDrugsRoute: typeof MissingDrugsRoute
+  PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
   ProfileRoute: typeof ProfileRoute
   SignupRoute: typeof SignupRoute
   TermsRoute: typeof TermsRoute
+  CheckoutReturnRoute: typeof CheckoutReturnRoute
   ConsultationIdRoute: typeof ConsultationIdRoute
   DoctorIdRoute: typeof DoctorIdRoute
   PharmacyDashboardRoute: typeof PharmacyDashboardRoute
   PharmacyRegisterRoute: typeof PharmacyRegisterRoute
+  ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -329,6 +369,13 @@ declare module '@tanstack/react-router' {
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/missing-drugs': {
@@ -443,12 +490,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ConsultationIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/checkout/return': {
+      id: '/checkout/return'
+      path: '/checkout/return'
+      fullPath: '/checkout/return'
+      preLoaderRoute: typeof CheckoutReturnRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/feed/post/$id': {
       id: '/feed/post/$id'
       path: '/post/$id'
       fullPath: '/feed/post/$id'
       preLoaderRoute: typeof FeedPostIdRouteImport
       parentRoute: typeof FeedRoute
+    }
+    '/api/public/payments/webhook': {
+      id: '/api/public/payments/webhook'
+      path: '/api/public/payments/webhook'
+      fullPath: '/api/public/payments/webhook'
+      preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
 }
@@ -477,14 +538,17 @@ const rootRouteChildren: RootRouteChildren = {
   JoinDoctorRoute: JoinDoctorRoute,
   LoginRoute: LoginRoute,
   MissingDrugsRoute: MissingDrugsRoute,
+  PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
   ProfileRoute: ProfileRoute,
   SignupRoute: SignupRoute,
   TermsRoute: TermsRoute,
+  CheckoutReturnRoute: CheckoutReturnRoute,
   ConsultationIdRoute: ConsultationIdRoute,
   DoctorIdRoute: DoctorIdRoute,
   PharmacyDashboardRoute: PharmacyDashboardRoute,
   PharmacyRegisterRoute: PharmacyRegisterRoute,
+  ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
