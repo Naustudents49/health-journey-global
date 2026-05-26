@@ -118,6 +118,66 @@ async function handleSubscriptionDeleted(subscription: any, env: StripeEnv) {
   if (userId) await syncDoctorProFlags(userId, env);
 }
 
+async function handleInvoicePaid(invoice: any, env: StripeEnv) {
+  const userId = invoice.subscription_details?.metadata?.userId || invoice.metadata?.userId;
+  if (!userId) {
+    console.warn("Invoice without userId metadata, skipping");
+    return;
+  }
+
+  const sb = getSupabase();
+  let subscriptionId: string | null = null;
+  if (invoice.subscription) {
+    const { data: subRow } = await sb
+      .from("subscriptions")
+      .select("id")
+      .eq("stripe_subscription_id", invoice.subscription as string)
+      .eq("environment", env)
+      .maybeSingle();
+    subscriptionId = (subRow?.id as string | undefined) ?? null;
+  }
+
+  const amount = invoice.amount_paid ?? invoice.amount_due ?? 0;
+  const issuedAt = invoice.status_transitions?.finalized_at
+    ? new Date(invoice.status_transitions.finalized_at * 1000).toISOString()
+    : new Date().toISOString();
+  const paidAt = invoice.status_transitions?.paid_at
+    ? new Date(invoice.status_transitions.paid_at * 1000).toISOString()
+    : null;
+
+  // De-duplicate by Stripe invoice id stored in eta_payload->>'stripe_invoice_id'
+  const { data: existing } = await sb
+    .from("invoices")
+    .select("id")
+    .eq("user_id", userId)
+    .eq("environment", env)
+    .filter("eta_payload->>stripe_invoice_id", "eq", invoice.id)
+    .maybeSingle();
+
+  const row = {
+    user_id: userId,
+    subscription_id: subscriptionId,
+    amount_cents: amount,
+    net_cents: amount,
+    currency: (invoice.currency || "egp").toUpperCase(),
+    status: invoice.status === "paid" ? "paid" : (invoice.status as string),
+    description: invoice.lines?.data?.[0]?.description ?? "Subscription invoice",
+    customer_name: invoice.customer_name ?? null,
+    issued_at: issuedAt,
+    paid_at: paidAt,
+    pdf_url: invoice.invoice_pdf ?? invoice.hosted_invoice_url ?? null,
+    eta_payload: { stripe_invoice_id: invoice.id } as any,
+    environment: env,
+    updated_at: new Date().toISOString(),
+  };
+
+  if (existing?.id) {
+    await sb.from("invoices").update(row).eq("id", existing.id as string);
+  } else {
+    await sb.from("invoices").insert(row);
+  }
+}
+
 async function handleWebhook(req: Request, env: StripeEnv) {
   const event = await verifyWebhook(req, env);
 
@@ -128,6 +188,10 @@ async function handleWebhook(req: Request, env: StripeEnv) {
       break;
     case "customer.subscription.deleted":
       await handleSubscriptionDeleted(event.data.object, env);
+      break;
+    case "invoice.paid":
+    case "invoice.payment_succeeded":
+      await handleInvoicePaid(event.data.object, env);
       break;
     default:
       console.log("Unhandled event:", event.type);
