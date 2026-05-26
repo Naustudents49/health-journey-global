@@ -8,12 +8,14 @@ const navLinks = {
   en: [
     { label: "Home", to: "/" },
     { label: "Doctors", to: "/doctors" },
+    { label: "Community", to: "/feed" },
     { label: "How It Works", to: "/how-it-works" },
     { label: "About", to: "/about" },
   ],
   ar: [
     { label: "الرئيسية", to: "/" },
     { label: "الأطباء", to: "/doctors" },
+    { label: "المجتمع", to: "/feed" },
     { label: "كيف يعمل", to: "/how-it-works" },
     { label: "من نحن", to: "/about" },
   ],

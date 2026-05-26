@@ -16,14 +16,17 @@ import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as JoinDoctorRouteImport } from './routes/join-doctor'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
+import { Route as FeedRouteImport } from './routes/feed'
 import { Route as DoctorsRouteImport } from './routes/doctors'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AppointmentsRouteImport } from './routes/appointments'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as FeedNewRouteImport } from './routes/feed.new'
 import { Route as DoctorIdRouteImport } from './routes/doctor.$id'
 import { Route as ConsultationIdRouteImport } from './routes/consultation.$id'
+import { Route as FeedPostIdRouteImport } from './routes/feed.post.$id'
 
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
@@ -60,6 +63,11 @@ const HowItWorksRoute = HowItWorksRouteImport.update({
   path: '/how-it-works',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FeedRoute = FeedRouteImport.update({
+  id: '/feed',
+  path: '/feed',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DoctorsRoute = DoctorsRouteImport.update({
   id: '/doctors',
   path: '/doctors',
@@ -90,6 +98,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FeedNewRoute = FeedNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => FeedRoute,
+} as any)
 const DoctorIdRoute = DoctorIdRouteImport.update({
   id: '/doctor/$id',
   path: '/doctor/$id',
@@ -100,6 +113,11 @@ const ConsultationIdRoute = ConsultationIdRouteImport.update({
   path: '/consultation/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FeedPostIdRoute = FeedPostIdRouteImport.update({
+  id: '/post/$id',
+  path: '/post/$id',
+  getParentRoute: () => FeedRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -108,6 +126,7 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
   '/doctors': typeof DoctorsRoute
+  '/feed': typeof FeedRouteWithChildren
   '/how-it-works': typeof HowItWorksRoute
   '/join-doctor': typeof JoinDoctorRoute
   '/login': typeof LoginRoute
@@ -117,6 +136,8 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/consultation/$id': typeof ConsultationIdRoute
   '/doctor/$id': typeof DoctorIdRoute
+  '/feed/new': typeof FeedNewRoute
+  '/feed/post/$id': typeof FeedPostIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -125,6 +146,7 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
   '/doctors': typeof DoctorsRoute
+  '/feed': typeof FeedRouteWithChildren
   '/how-it-works': typeof HowItWorksRoute
   '/join-doctor': typeof JoinDoctorRoute
   '/login': typeof LoginRoute
@@ -134,6 +156,8 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/consultation/$id': typeof ConsultationIdRoute
   '/doctor/$id': typeof DoctorIdRoute
+  '/feed/new': typeof FeedNewRoute
+  '/feed/post/$id': typeof FeedPostIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -143,6 +167,7 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
   '/doctors': typeof DoctorsRoute
+  '/feed': typeof FeedRouteWithChildren
   '/how-it-works': typeof HowItWorksRoute
   '/join-doctor': typeof JoinDoctorRoute
   '/login': typeof LoginRoute
@@ -152,6 +177,8 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/consultation/$id': typeof ConsultationIdRoute
   '/doctor/$id': typeof DoctorIdRoute
+  '/feed/new': typeof FeedNewRoute
+  '/feed/post/$id': typeof FeedPostIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -162,6 +189,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/dashboard'
     | '/doctors'
+    | '/feed'
     | '/how-it-works'
     | '/join-doctor'
     | '/login'
@@ -171,6 +199,8 @@ export interface FileRouteTypes {
     | '/terms'
     | '/consultation/$id'
     | '/doctor/$id'
+    | '/feed/new'
+    | '/feed/post/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -179,6 +209,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/dashboard'
     | '/doctors'
+    | '/feed'
     | '/how-it-works'
     | '/join-doctor'
     | '/login'
@@ -188,6 +219,8 @@ export interface FileRouteTypes {
     | '/terms'
     | '/consultation/$id'
     | '/doctor/$id'
+    | '/feed/new'
+    | '/feed/post/$id'
   id:
     | '__root__'
     | '/'
@@ -196,6 +229,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/dashboard'
     | '/doctors'
+    | '/feed'
     | '/how-it-works'
     | '/join-doctor'
     | '/login'
@@ -205,6 +239,8 @@ export interface FileRouteTypes {
     | '/terms'
     | '/consultation/$id'
     | '/doctor/$id'
+    | '/feed/new'
+    | '/feed/post/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -214,6 +250,7 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   DashboardRoute: typeof DashboardRoute
   DoctorsRoute: typeof DoctorsRoute
+  FeedRoute: typeof FeedRouteWithChildren
   HowItWorksRoute: typeof HowItWorksRoute
   JoinDoctorRoute: typeof JoinDoctorRoute
   LoginRoute: typeof LoginRoute
@@ -276,6 +313,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HowItWorksRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/feed': {
+      id: '/feed'
+      path: '/feed'
+      fullPath: '/feed'
+      preLoaderRoute: typeof FeedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/doctors': {
       id: '/doctors'
       path: '/doctors'
@@ -318,6 +362,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/feed/new': {
+      id: '/feed/new'
+      path: '/new'
+      fullPath: '/feed/new'
+      preLoaderRoute: typeof FeedNewRouteImport
+      parentRoute: typeof FeedRoute
+    }
     '/doctor/$id': {
       id: '/doctor/$id'
       path: '/doctor/$id'
@@ -332,8 +383,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ConsultationIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/feed/post/$id': {
+      id: '/feed/post/$id'
+      path: '/post/$id'
+      fullPath: '/feed/post/$id'
+      preLoaderRoute: typeof FeedPostIdRouteImport
+      parentRoute: typeof FeedRoute
+    }
   }
 }
+
+interface FeedRouteChildren {
+  FeedNewRoute: typeof FeedNewRoute
+  FeedPostIdRoute: typeof FeedPostIdRoute
+}
+
+const FeedRouteChildren: FeedRouteChildren = {
+  FeedNewRoute: FeedNewRoute,
+  FeedPostIdRoute: FeedPostIdRoute,
+}
+
+const FeedRouteWithChildren = FeedRoute._addFileChildren(FeedRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -342,6 +412,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   DashboardRoute: DashboardRoute,
   DoctorsRoute: DoctorsRoute,
+  FeedRoute: FeedRouteWithChildren,
   HowItWorksRoute: HowItWorksRoute,
   JoinDoctorRoute: JoinDoctorRoute,
   LoginRoute: LoginRoute,
