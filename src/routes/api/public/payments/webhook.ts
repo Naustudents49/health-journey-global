@@ -42,14 +42,15 @@ async function syncDoctorProFlags(userId: string, env: StripeEnv) {
 
   const now = Date.now();
   const periodEnd = sub?.current_period_end ? new Date(sub.current_period_end as string).getTime() : null;
-  const isActive =
-    !!sub &&
-    ((["active", "trialing", "past_due"].includes(sub.status as string) && (!periodEnd || periodEnd > now)) ||
-      (sub.status === "canceled" && periodEnd && periodEnd > now));
+  const isActive = Boolean(
+    sub &&
+      ((["active", "trialing", "past_due"].includes(sub.status as string) && (!periodEnd || periodEnd > now)) ||
+        (sub.status === "canceled" && periodEnd && periodEnd > now)),
+  );
 
   const plan = isActive ? (sub?.plan_code as string | null) : null;
-  const isPro = isActive && (plan === "doctor_pro_monthly" || plan === "doctor_pro_plus_monthly");
-  const isProPlus = isActive && plan === "doctor_pro_plus_monthly";
+  const isPro = Boolean(isActive && (plan === "doctor_pro_monthly" || plan === "doctor_pro_plus_monthly"));
+  const isProPlus = Boolean(isActive && plan === "doctor_pro_plus_monthly");
 
   // Find doctor_details for this user
   const { data: profile } = await sb
@@ -91,7 +92,7 @@ async function handleSubscriptionUpsert(subscription: any, env: StripeEnv) {
         stripe_subscription_id: subscription.id,
         stripe_customer_id: subscription.customer,
         product_id: productId,
-        price_id: priceId,
+        price_id: priceId ?? "",
         plan_code: planCode,
         status: subscription.status,
         cancel_at_period_end: subscription.cancel_at_period_end || false,
