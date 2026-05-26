@@ -163,7 +163,12 @@ function DoctorDetailPage() {
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
                     <h1 className="text-2xl font-bold text-foreground">{name}</h1>
-                    {doctor.is_verified && <BadgeCheck className="h-5 w-5 text-primary" />}
+                    <VerifiedBadge verified={!!doctor.is_verified} />
+                    {doctor.telemedicine_enabled && (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-teal/10 px-2 py-0.5 text-xs text-teal">
+                        <Video className="h-3 w-3" /> كشف أون لاين
+                      </span>
+                    )}
                   </div>
                   <p className="text-muted-foreground">{doctor.specialty}</p>
                   <div className="mt-3 flex flex-wrap gap-4 text-sm">
