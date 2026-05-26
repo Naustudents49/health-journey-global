@@ -248,7 +248,7 @@ function UserMenu({
   t,
 }: {
   user: { email?: string } | null;
-  role: "admin" | "doctor" | "patient" | null;
+  role: "admin" | "doctor" | "patient" | "pharmacy" | null;
   signOut: () => Promise<void>;
   t: (en: string, ar: string) => string;
 }) {
