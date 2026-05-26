@@ -13,6 +13,7 @@ import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as MissingDrugsRouteImport } from './routes/missing-drugs'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as JoinDoctorRouteImport } from './routes/join-doctor'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
@@ -46,6 +47,11 @@ const ProfileRoute = ProfileRouteImport.update({
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MissingDrugsRoute = MissingDrugsRouteImport.update({
+  id: '/missing-drugs',
+  path: '/missing-drugs',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -130,6 +136,7 @@ export interface FileRoutesByFullPath {
   '/how-it-works': typeof HowItWorksRoute
   '/join-doctor': typeof JoinDoctorRoute
   '/login': typeof LoginRoute
+  '/missing-drugs': typeof MissingDrugsRoute
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
   '/signup': typeof SignupRoute
@@ -150,6 +157,7 @@ export interface FileRoutesByTo {
   '/how-it-works': typeof HowItWorksRoute
   '/join-doctor': typeof JoinDoctorRoute
   '/login': typeof LoginRoute
+  '/missing-drugs': typeof MissingDrugsRoute
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
   '/signup': typeof SignupRoute
@@ -171,6 +179,7 @@ export interface FileRoutesById {
   '/how-it-works': typeof HowItWorksRoute
   '/join-doctor': typeof JoinDoctorRoute
   '/login': typeof LoginRoute
+  '/missing-drugs': typeof MissingDrugsRoute
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
   '/signup': typeof SignupRoute
@@ -193,6 +202,7 @@ export interface FileRouteTypes {
     | '/how-it-works'
     | '/join-doctor'
     | '/login'
+    | '/missing-drugs'
     | '/privacy'
     | '/profile'
     | '/signup'
@@ -213,6 +223,7 @@ export interface FileRouteTypes {
     | '/how-it-works'
     | '/join-doctor'
     | '/login'
+    | '/missing-drugs'
     | '/privacy'
     | '/profile'
     | '/signup'
@@ -233,6 +244,7 @@ export interface FileRouteTypes {
     | '/how-it-works'
     | '/join-doctor'
     | '/login'
+    | '/missing-drugs'
     | '/privacy'
     | '/profile'
     | '/signup'
@@ -254,6 +266,7 @@ export interface RootRouteChildren {
   HowItWorksRoute: typeof HowItWorksRoute
   JoinDoctorRoute: typeof JoinDoctorRoute
   LoginRoute: typeof LoginRoute
+  MissingDrugsRoute: typeof MissingDrugsRoute
   PrivacyRoute: typeof PrivacyRoute
   ProfileRoute: typeof ProfileRoute
   SignupRoute: typeof SignupRoute
@@ -290,6 +303,13 @@ declare module '@tanstack/react-router' {
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/missing-drugs': {
+      id: '/missing-drugs'
+      path: '/missing-drugs'
+      fullPath: '/missing-drugs'
+      preLoaderRoute: typeof MissingDrugsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -416,6 +436,7 @@ const rootRouteChildren: RootRouteChildren = {
   HowItWorksRoute: HowItWorksRoute,
   JoinDoctorRoute: JoinDoctorRoute,
   LoginRoute: LoginRoute,
+  MissingDrugsRoute: MissingDrugsRoute,
   PrivacyRoute: PrivacyRoute,
   ProfileRoute: ProfileRoute,
   SignupRoute: SignupRoute,
