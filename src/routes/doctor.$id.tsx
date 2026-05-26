@@ -430,9 +430,14 @@ function DoctorDetailPage() {
                       className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                   </div>
+                  {appointmentType === "video" && (!doctor.is_verified || !doctor.telemedicine_enabled) && (
+                    <p className="text-xs text-amber-600">
+                      {t("This doctor hasn't enabled video consults yet.", "هذا الطبيب لم يفعّل الكشف أون لاين بعد.")}
+                    </p>
+                  )}
                   <button
-                    onClick={() => bookMutation.mutate()}
-                    disabled={bookMutation.isPending || !selectedDate || !selectedTime}
+                    onClick={handleBook}
+                    disabled={bookMutation.isPending || !selectedDate || !selectedTime || (appointmentType === "video" && (!doctor.is_verified || !doctor.telemedicine_enabled))}
                     className="w-full py-2.5 bg-primary text-primary-foreground rounded-lg font-medium hover:opacity-90 disabled:opacity-50"
                   >
                     {bookMutation.isPending ? t("Booking...", "جارٍ الحجز...") : t("Book appointment", "احجز موعداً")}
@@ -443,6 +448,14 @@ function DoctorDetailPage() {
           </div>
         </div>
       </div>
+
+      <PatientConsentModal
+        open={consentOpen}
+        doctorName={name}
+        onCancel={() => setConsentOpen(false)}
+        onConfirm={(consents) => bookMutation.mutate(consents)}
+        isSubmitting={bookMutation.isPending}
+      />
     </div>
   );
 }
