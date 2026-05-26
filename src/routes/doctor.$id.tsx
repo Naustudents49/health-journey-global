@@ -6,8 +6,10 @@ import { useAuth } from "@/hooks/useAuth";
 import { useCurrency } from "@/hooks/useCurrency";
 import { supabase } from "@/integrations/supabase/client";
 import { ClinicMap } from "@/components/maps/ClinicMap";
-import { Star, MapPin, BadgeCheck, Calendar, Clock, ArrowLeft, Loader2, MessageSquare, Video, Building2, Phone } from "lucide-react";
+import { Star, MapPin, Calendar, Clock, ArrowLeft, Loader2, MessageSquare, Video, Building2, Phone } from "lucide-react";
 import { toast } from "sonner";
+import { PatientConsentModal, CONSENT_TEXT_VERSION } from "@/components/PatientConsentModal";
+import { VerifiedBadge } from "@/components/VerifiedBadge";
 
 export const Route = createFileRoute("/doctor/$id")({
   head: ({ params }) => ({
