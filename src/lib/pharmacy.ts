@@ -179,15 +179,16 @@ export async function listDrugListings(filters: ListListingsFilters = {}): Promi
     new Set(listings.map((l) => l.branch_id).filter((x): x is string => !!x))
   );
 
+  type BranchLite = Pick<PharmacyBranch, "id" | "name" | "city" | "address" | "phone" | "lat" | "lng">;
   const [{ data: chains }, { data: branches }] = await Promise.all([
     supabase.from("pharmacy_chains").select("id, name, name_ar, logo_url, slug, is_verified").in("id", chainIds),
     branchIds.length
       ? supabase.from("pharmacy_branches").select("id, name, city, address, phone, lat, lng").in("id", branchIds)
-      : Promise.resolve({ data: [] as PharmacyBranch[] }),
+      : Promise.resolve({ data: [] as BranchLite[] }),
   ]);
 
   const chainMap = new Map((chains ?? []).map((c) => [c.id, c]));
-  const branchMap = new Map((branches ?? []).map((b: PharmacyBranch) => [b.id, b]));
+  const branchMap = new Map(((branches ?? []) as BranchLite[]).map((b) => [b.id, b]));
 
   // Only show listings for verified chains
   listings = listings.filter((l) => chainMap.get(l.chain_id)?.is_verified);
@@ -208,6 +209,7 @@ export async function listMyListings(chainId: string): Promise<DrugListing[]> {
   if (error) throw error;
   const listings = (data ?? []) as unknown as DrugListing[];
 
+  type BranchLite = Pick<PharmacyBranch, "id" | "name" | "city" | "address" | "phone" | "lat" | "lng">;
   const branchIds = Array.from(new Set(listings.map((l) => l.branch_id).filter((x): x is string => !!x)));
   if (branchIds.length === 0) return listings;
 
@@ -215,7 +217,7 @@ export async function listMyListings(chainId: string): Promise<DrugListing[]> {
     .from("pharmacy_branches")
     .select("id, name, city, address, phone, lat, lng")
     .in("id", branchIds);
-  const map = new Map((branches ?? []).map((b: PharmacyBranch) => [b.id, b]));
+  const map = new Map(((branches ?? []) as BranchLite[]).map((b) => [b.id, b]));
   return listings.map((l) => ({ ...l, branch: l.branch_id ? map.get(l.branch_id) ?? null : null }));
 }
 
