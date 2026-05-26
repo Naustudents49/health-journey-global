@@ -319,6 +319,254 @@ export type Database = {
           },
         ]
       }
+      post_drug_info: {
+        Row: {
+          alternative_suggested: string | null
+          created_at: string
+          dosage: string | null
+          drug_name: string
+          id: string
+          post_id: string
+          updated_at: string
+        }
+        Insert: {
+          alternative_suggested?: string | null
+          created_at?: string
+          dosage?: string | null
+          drug_name: string
+          id?: string
+          post_id: string
+          updated_at?: string
+        }
+        Update: {
+          alternative_suggested?: string | null
+          created_at?: string
+          dosage?: string | null
+          drug_name?: string
+          id?: string
+          post_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_drug_info_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: true
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      post_reactions: {
+        Row: {
+          created_at: string
+          id: string
+          post_id: string
+          reaction_type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          post_id: string
+          reaction_type?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          post_id?: string
+          reaction_type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_reactions_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      post_replies: {
+        Row: {
+          author_profile_id: string
+          author_role: string
+          body: string
+          created_at: string
+          id: string
+          is_doctor_verified: boolean | null
+          parent_reply_id: string | null
+          post_id: string
+          updated_at: string
+        }
+        Insert: {
+          author_profile_id: string
+          author_role: string
+          body: string
+          created_at?: string
+          id?: string
+          is_doctor_verified?: boolean | null
+          parent_reply_id?: string | null
+          post_id: string
+          updated_at?: string
+        }
+        Update: {
+          author_profile_id?: string
+          author_role?: string
+          body?: string
+          created_at?: string
+          id?: string
+          is_doctor_verified?: boolean | null
+          parent_reply_id?: string | null
+          post_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_replies_author_profile_id_fkey"
+            columns: ["author_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "post_replies_parent_reply_id_fkey"
+            columns: ["parent_reply_id"]
+            isOneToOne: false
+            referencedRelation: "post_replies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "post_replies_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      post_reports: {
+        Row: {
+          created_at: string
+          id: string
+          post_id: string | null
+          reason: string
+          reply_id: string | null
+          reporter_user_id: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          post_id?: string | null
+          reason: string
+          reply_id?: string | null
+          reporter_user_id: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          post_id?: string | null
+          reason?: string
+          reply_id?: string | null
+          reporter_user_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_reports_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "post_reports_reply_id_fkey"
+            columns: ["reply_id"]
+            isOneToOne: false
+            referencedRelation: "post_replies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      posts: {
+        Row: {
+          author_profile_id: string
+          author_role: string
+          body: string
+          city: string | null
+          country: string | null
+          created_at: string
+          id: string
+          is_pinned: boolean | null
+          is_resolved: boolean | null
+          media_urls: string[] | null
+          post_type: string
+          reactions_count: number | null
+          replies_count: number | null
+          specialty_id: string | null
+          tags: string[] | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author_profile_id: string
+          author_role: string
+          body: string
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          id?: string
+          is_pinned?: boolean | null
+          is_resolved?: boolean | null
+          media_urls?: string[] | null
+          post_type: string
+          reactions_count?: number | null
+          replies_count?: number | null
+          specialty_id?: string | null
+          tags?: string[] | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author_profile_id?: string
+          author_role?: string
+          body?: string
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          id?: string
+          is_pinned?: boolean | null
+          is_resolved?: boolean | null
+          media_urls?: string[] | null
+          post_type?: string
+          reactions_count?: number | null
+          replies_count?: number | null
+          specialty_id?: string | null
+          tags?: string[] | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "posts_author_profile_id_fkey"
+            columns: ["author_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "posts_specialty_id_fkey"
+            columns: ["specialty_id"]
+            isOneToOne: false
+            referencedRelation: "specialties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -459,7 +707,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      is_verified_doctor_profile: {
+        Args: { _profile_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       app_role: "admin" | "doctor" | "patient"
