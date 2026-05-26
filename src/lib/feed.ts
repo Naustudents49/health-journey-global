@@ -58,6 +58,9 @@ export interface ListPostsFilters {
   specialtyId?: string;
   search?: string;
   city?: string;
+  country?: string;
+  drugName?: string;
+  resolved?: "all" | "open" | "resolved";
   limit?: number;
 }
 
@@ -72,13 +75,24 @@ export async function listPosts(filters: ListPostsFilters = {}): Promise<FeedPos
   if (filters.type && filters.type !== "all") q = q.eq("post_type", filters.type);
   if (filters.specialtyId) q = q.eq("specialty_id", filters.specialtyId);
   if (filters.city) q = q.ilike("city", `%${filters.city}%`);
+  if (filters.country) q = q.ilike("country", `%${filters.country}%`);
   if (filters.search) q = q.or(`title.ilike.%${filters.search}%,body.ilike.%${filters.search}%`);
+  if (filters.resolved === "open") q = q.eq("is_resolved", false);
+  if (filters.resolved === "resolved") q = q.eq("is_resolved", true);
 
   const { data, error } = await q;
   if (error) throw error;
-  if (!data || data.length === 0) return [];
+  let posts = (data ?? []) as unknown as FeedPost[];
 
-  const posts = data as unknown as FeedPost[];
+  if (filters.drugName) {
+    const needle = filters.drugName.toLowerCase();
+    posts = posts.filter((p) => {
+      const di = Array.isArray(p.drug_info) ? p.drug_info[0] : p.drug_info;
+      return di?.drug_name?.toLowerCase().includes(needle);
+    });
+  }
+  if (posts.length === 0) return [];
+
   const profileIds = Array.from(new Set(posts.map((p) => p.author_profile_id)));
 
   const [{ data: profiles }, { data: doctorRows }] = await Promise.all([
@@ -98,6 +112,29 @@ export async function listPosts(filters: ListPostsFilters = {}): Promise<FeedPos
       is_author_verified_doctor: dd?.is_verified ?? false,
       author_specialty: dd?.specialty ?? null,
     };
+  });
+}
+
+export async function reverseGeocodeCity(lat: number, lng: number): Promise<{ city: string | null; country: string | null }> {
+  if (typeof window === "undefined" || !window.google?.maps) return { city: null, country: null };
+  const geocoder = new window.google.maps.Geocoder();
+  return new Promise((resolve) => {
+    geocoder.geocode({ location: { lat, lng } }, (results, status) => {
+      if (status !== "OK" || !results || results.length === 0) {
+        resolve({ city: null, country: null });
+        return;
+      }
+      let city: string | null = null;
+      let country: string | null = null;
+      for (const r of results) {
+        for (const c of r.address_components) {
+          if (!city && (c.types.includes("locality") || c.types.includes("administrative_area_level_2"))) city = c.long_name;
+          if (!country && c.types.includes("country")) country = c.long_name;
+        }
+        if (city && country) break;
+      }
+      resolve({ city, country });
+    });
   });
 }
 
