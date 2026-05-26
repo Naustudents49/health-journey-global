@@ -82,28 +82,74 @@ function DoctorDetailPage() {
   });
 
   const bookMutation = useMutation({
-    mutationFn: async () => {
+    mutationFn: async (consents?: {
+      telemedicine_consent: boolean;
+      data_processing_consent: boolean;
+      recording_consent: boolean;
+    }) => {
       if (!user || !profile) throw new Error("Login required");
       if (!selectedDate || !selectedTime) throw new Error("Pick date & time");
+      if (appointmentType === "video") {
+        if (!doctor?.is_verified || !doctor?.telemedicine_enabled) {
+          throw new Error("هذا الطبيب لم يفعّل الكشف أون لاين");
+        }
+        if (!consents?.telemedicine_consent || !consents?.data_processing_consent) {
+          throw new Error("الموافقة مطلوبة لإتمام الحجز");
+        }
+      }
       const scheduled = new Date(`${selectedDate}T${selectedTime}`).toISOString();
-      const { error } = await supabase.from("appointments").insert({
+      const { data: appt, error } = await supabase.from("appointments").insert({
         patient_id: profile.id,
         doctor_id: id,
         scheduled_at: scheduled,
         appointment_type: appointmentType,
         fee: doctor?.consultation_fee ?? 0,
         notes: notes || null,
-      });
+        patient_consent_accepted: appointmentType === "video",
+      }).select("id").single();
       if (error) throw error;
+
+      if (appointmentType === "video" && appt && consents) {
+        await supabase.from("patient_appointment_consent").insert({
+          appointment_id: appt.id,
+          patient_id: profile.id,
+          doctor_id: id,
+          telemedicine_consent: consents.telemedicine_consent,
+          data_processing_consent: consents.data_processing_consent,
+          recording_consent: consents.recording_consent,
+          consent_text_version: CONSENT_TEXT_VERSION,
+          user_agent: navigator.userAgent,
+        });
+        await supabase.from("audit_logs").insert({
+          user_id: user.id,
+          action: "telemedicine_consent_given",
+          resource_type: "appointment",
+          resource_id: appt.id,
+          metadata: { doctor_id: id, version: CONSENT_TEXT_VERSION },
+        });
+      }
     },
     onSuccess: () => {
       toast.success(t("Appointment booked successfully", "تم حجز الموعد بنجاح"));
       setSelectedDate("");
       setSelectedTime("");
       setNotes("");
+      setConsentOpen(false);
     },
     onError: (e: Error) => toast.error(e.message),
   });
+
+  const handleBook = () => {
+    if (appointmentType === "video") {
+      if (!doctor?.is_verified || !doctor?.telemedicine_enabled) {
+        toast.error(t("Doctor not enabled for video consults", "هذا الطبيب لم يفعّل الكشف أون لاين"));
+        return;
+      }
+      setConsentOpen(true);
+      return;
+    }
+    bookMutation.mutate(undefined);
+  };
 
   const reviewMutation = useMutation({
     mutationFn: async () => {
