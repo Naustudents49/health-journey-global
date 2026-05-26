@@ -6,8 +6,10 @@ import { useAuth } from "@/hooks/useAuth";
 import { useCurrency } from "@/hooks/useCurrency";
 import { supabase } from "@/integrations/supabase/client";
 import { ClinicMap } from "@/components/maps/ClinicMap";
-import { Star, MapPin, BadgeCheck, Calendar, Clock, ArrowLeft, Loader2, MessageSquare, Video, Building2, Phone } from "lucide-react";
+import { Star, MapPin, Calendar, Clock, ArrowLeft, Loader2, MessageSquare, Video, Building2, Phone } from "lucide-react";
 import { toast } from "sonner";
+import { PatientConsentModal, CONSENT_TEXT_VERSION } from "@/components/PatientConsentModal";
+import { VerifiedBadge } from "@/components/VerifiedBadge";
 
 export const Route = createFileRoute("/doctor/$id")({
   head: ({ params }) => ({
@@ -32,6 +34,7 @@ function DoctorDetailPage() {
   const [notes, setNotes] = useState("");
   const [reviewRating, setReviewRating] = useState(5);
   const [reviewText, setReviewText] = useState("");
+  const [consentOpen, setConsentOpen] = useState(false);
 
   const { data: doctor, isLoading } = useQuery({
     queryKey: ["doctor", id],
@@ -79,28 +82,74 @@ function DoctorDetailPage() {
   });
 
   const bookMutation = useMutation({
-    mutationFn: async () => {
+    mutationFn: async (consents?: {
+      telemedicine_consent: boolean;
+      data_processing_consent: boolean;
+      recording_consent: boolean;
+    }) => {
       if (!user || !profile) throw new Error("Login required");
       if (!selectedDate || !selectedTime) throw new Error("Pick date & time");
+      if (appointmentType === "video") {
+        if (!doctor?.is_verified || !doctor?.telemedicine_enabled) {
+          throw new Error("هذا الطبيب لم يفعّل الكشف أون لاين");
+        }
+        if (!consents?.telemedicine_consent || !consents?.data_processing_consent) {
+          throw new Error("الموافقة مطلوبة لإتمام الحجز");
+        }
+      }
       const scheduled = new Date(`${selectedDate}T${selectedTime}`).toISOString();
-      const { error } = await supabase.from("appointments").insert({
+      const { data: appt, error } = await supabase.from("appointments").insert({
         patient_id: profile.id,
         doctor_id: id,
         scheduled_at: scheduled,
         appointment_type: appointmentType,
         fee: doctor?.consultation_fee ?? 0,
         notes: notes || null,
-      });
+        patient_consent_accepted: appointmentType === "video",
+      }).select("id").single();
       if (error) throw error;
+
+      if (appointmentType === "video" && appt && consents) {
+        await supabase.from("patient_appointment_consent").insert({
+          appointment_id: appt.id,
+          patient_id: profile.id,
+          doctor_id: id,
+          telemedicine_consent: consents.telemedicine_consent,
+          data_processing_consent: consents.data_processing_consent,
+          recording_consent: consents.recording_consent,
+          consent_text_version: CONSENT_TEXT_VERSION,
+          user_agent: navigator.userAgent,
+        });
+        await supabase.from("audit_logs").insert({
+          user_id: user.id,
+          action: "telemedicine_consent_given",
+          resource_type: "appointment",
+          resource_id: appt.id,
+          metadata: { doctor_id: id, version: CONSENT_TEXT_VERSION },
+        });
+      }
     },
     onSuccess: () => {
       toast.success(t("Appointment booked successfully", "تم حجز الموعد بنجاح"));
       setSelectedDate("");
       setSelectedTime("");
       setNotes("");
+      setConsentOpen(false);
     },
     onError: (e: Error) => toast.error(e.message),
   });
+
+  const handleBook = () => {
+    if (appointmentType === "video") {
+      if (!doctor?.is_verified || !doctor?.telemedicine_enabled) {
+        toast.error(t("Doctor not enabled for video consults", "هذا الطبيب لم يفعّل الكشف أون لاين"));
+        return;
+      }
+      setConsentOpen(true);
+      return;
+    }
+    bookMutation.mutate(undefined);
+  };
 
   const reviewMutation = useMutation({
     mutationFn: async () => {
@@ -161,7 +210,12 @@ function DoctorDetailPage() {
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
                     <h1 className="text-2xl font-bold text-foreground">{name}</h1>
-                    {doctor.is_verified && <BadgeCheck className="h-5 w-5 text-primary" />}
+                    <VerifiedBadge verified={!!doctor.is_verified} />
+                    {doctor.telemedicine_enabled && (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-teal/10 px-2 py-0.5 text-xs text-teal">
+                        <Video className="h-3 w-3" /> كشف أون لاين
+                      </span>
+                    )}
                   </div>
                   <p className="text-muted-foreground">{doctor.specialty}</p>
                   <div className="mt-3 flex flex-wrap gap-4 text-sm">
@@ -376,9 +430,14 @@ function DoctorDetailPage() {
                       className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                   </div>
+                  {appointmentType === "video" && (!doctor.is_verified || !doctor.telemedicine_enabled) && (
+                    <p className="text-xs text-amber-600">
+                      {t("This doctor hasn't enabled video consults yet.", "هذا الطبيب لم يفعّل الكشف أون لاين بعد.")}
+                    </p>
+                  )}
                   <button
-                    onClick={() => bookMutation.mutate()}
-                    disabled={bookMutation.isPending || !selectedDate || !selectedTime}
+                    onClick={handleBook}
+                    disabled={bookMutation.isPending || !selectedDate || !selectedTime || (appointmentType === "video" && (!doctor.is_verified || !doctor.telemedicine_enabled))}
                     className="w-full py-2.5 bg-primary text-primary-foreground rounded-lg font-medium hover:opacity-90 disabled:opacity-50"
                   >
                     {bookMutation.isPending ? t("Booking...", "جارٍ الحجز...") : t("Book appointment", "احجز موعداً")}
@@ -389,6 +448,14 @@ function DoctorDetailPage() {
           </div>
         </div>
       </div>
+
+      <PatientConsentModal
+        open={consentOpen}
+        doctorName={name}
+        onCancel={() => setConsentOpen(false)}
+        onConfirm={(consents) => bookMutation.mutate(consents)}
+        isSubmitting={bookMutation.isPending}
+      />
     </div>
   );
 }

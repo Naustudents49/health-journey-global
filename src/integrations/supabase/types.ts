@@ -305,7 +305,11 @@ export type Database = {
           syndicate_number: string | null
           telemedicine_enabled: boolean
           updated_at: string
+          verification_notes: string | null
+          verification_reviewed_at: string | null
+          verification_reviewed_by: string | null
           verification_status: string | null
+          verification_submitted_at: string | null
           years_experience: number | null
         }
         Insert: {
@@ -331,7 +335,11 @@ export type Database = {
           syndicate_number?: string | null
           telemedicine_enabled?: boolean
           updated_at?: string
+          verification_notes?: string | null
+          verification_reviewed_at?: string | null
+          verification_reviewed_by?: string | null
           verification_status?: string | null
+          verification_submitted_at?: string | null
           years_experience?: number | null
         }
         Update: {
@@ -357,7 +365,11 @@ export type Database = {
           syndicate_number?: string | null
           telemedicine_enabled?: boolean
           updated_at?: string
+          verification_notes?: string | null
+          verification_reviewed_at?: string | null
+          verification_reviewed_by?: string | null
           verification_status?: string | null
+          verification_submitted_at?: string | null
           years_experience?: number | null
         }
         Relationships: [
@@ -491,6 +503,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      patient_appointment_consent: {
+        Row: {
+          appointment_id: string
+          consent_text_version: string
+          created_at: string
+          data_processing_consent: boolean
+          doctor_id: string
+          id: string
+          ip_address: string | null
+          patient_id: string
+          recording_consent: boolean
+          telemedicine_consent: boolean
+          user_agent: string | null
+        }
+        Insert: {
+          appointment_id: string
+          consent_text_version?: string
+          created_at?: string
+          data_processing_consent?: boolean
+          doctor_id: string
+          id?: string
+          ip_address?: string | null
+          patient_id: string
+          recording_consent?: boolean
+          telemedicine_consent?: boolean
+          user_agent?: string | null
+        }
+        Update: {
+          appointment_id?: string
+          consent_text_version?: string
+          created_at?: string
+          data_processing_consent?: boolean
+          doctor_id?: string
+          id?: string
+          ip_address?: string | null
+          patient_id?: string
+          recording_consent?: boolean
+          telemedicine_consent?: boolean
+          user_agent?: string | null
+        }
+        Relationships: []
       }
       patient_details: {
         Row: {
@@ -1274,6 +1328,13 @@ export type Database = {
       }
       has_plan: {
         Args: { check_env?: string; plan: string; user_uuid: string }
+        Returns: boolean
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
         Returns: boolean
       }
       is_verified_doctor_profile: {

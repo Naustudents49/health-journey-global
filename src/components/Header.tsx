@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { HeartPulse, Menu, X, Globe, Check, ChevronDown, User, LogOut, Calendar, LayoutDashboard } from "lucide-react";
+import { HeartPulse, Menu, X, Globe, Check, ChevronDown, User, LogOut, Calendar, LayoutDashboard, ShieldCheck, BadgeCheck } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useLanguage, LANGUAGES, type Language } from "@/hooks/useLanguage";
 import { useAuth } from "@/hooks/useAuth";
@@ -280,13 +280,33 @@ function UserMenu({
       {open && (
         <div className="absolute end-0 mt-2 w-48 rounded-xl border border-border bg-popover p-1 shadow-lg z-50">
           {role === "doctor" && (
+            <>
+              <Link
+                to="/dashboard"
+                onClick={() => setOpen(false)}
+                className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-foreground transition-colors hover:bg-accent"
+              >
+                <LayoutDashboard className="h-4 w-4" />
+                {t("Dashboard", "لوحة التحكم")}
+              </Link>
+              <Link
+                to="/doctor/verification"
+                onClick={() => setOpen(false)}
+                className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-foreground transition-colors hover:bg-accent"
+              >
+                <BadgeCheck className="h-4 w-4" />
+                {t("Verification", "التوثيق")}
+              </Link>
+            </>
+          )}
+          {role === "admin" && (
             <Link
-              to="/dashboard"
+              to="/admin/verifications"
               onClick={() => setOpen(false)}
               className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-foreground transition-colors hover:bg-accent"
             >
-              <LayoutDashboard className="h-4 w-4" />
-              {t("Dashboard", "لوحة التحكم")}
+              <ShieldCheck className="h-4 w-4" />
+              {t("Admin", "لوحة الأدمن")}
             </Link>
           )}
           {role === "pharmacy" && (

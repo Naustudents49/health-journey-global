@@ -28,9 +28,11 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as PharmacyRegisterRouteImport } from './routes/pharmacy.register'
 import { Route as PharmacyDashboardRouteImport } from './routes/pharmacy.dashboard'
 import { Route as FeedNewRouteImport } from './routes/feed.new'
+import { Route as DoctorVerificationRouteImport } from './routes/doctor.verification'
 import { Route as DoctorIdRouteImport } from './routes/doctor.$id'
 import { Route as ConsultationIdRouteImport } from './routes/consultation.$id'
 import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
+import { Route as AdminVerificationsRouteImport } from './routes/admin.verifications'
 import { Route as FeedPostIdRouteImport } from './routes/feed.post.$id'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 
@@ -129,6 +131,11 @@ const FeedNewRoute = FeedNewRouteImport.update({
   path: '/new',
   getParentRoute: () => FeedRoute,
 } as any)
+const DoctorVerificationRoute = DoctorVerificationRouteImport.update({
+  id: '/doctor/verification',
+  path: '/doctor/verification',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DoctorIdRoute = DoctorIdRouteImport.update({
   id: '/doctor/$id',
   path: '/doctor/$id',
@@ -142,6 +149,11 @@ const ConsultationIdRoute = ConsultationIdRouteImport.update({
 const CheckoutReturnRoute = CheckoutReturnRouteImport.update({
   id: '/checkout/return',
   path: '/checkout/return',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminVerificationsRoute = AdminVerificationsRouteImport.update({
+  id: '/admin/verifications',
+  path: '/admin/verifications',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FeedPostIdRoute = FeedPostIdRouteImport.update({
@@ -173,9 +185,11 @@ export interface FileRoutesByFullPath {
   '/profile': typeof ProfileRoute
   '/signup': typeof SignupRoute
   '/terms': typeof TermsRoute
+  '/admin/verifications': typeof AdminVerificationsRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/consultation/$id': typeof ConsultationIdRoute
   '/doctor/$id': typeof DoctorIdRoute
+  '/doctor/verification': typeof DoctorVerificationRoute
   '/feed/new': typeof FeedNewRoute
   '/pharmacy/dashboard': typeof PharmacyDashboardRoute
   '/pharmacy/register': typeof PharmacyRegisterRoute
@@ -199,9 +213,11 @@ export interface FileRoutesByTo {
   '/profile': typeof ProfileRoute
   '/signup': typeof SignupRoute
   '/terms': typeof TermsRoute
+  '/admin/verifications': typeof AdminVerificationsRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/consultation/$id': typeof ConsultationIdRoute
   '/doctor/$id': typeof DoctorIdRoute
+  '/doctor/verification': typeof DoctorVerificationRoute
   '/feed/new': typeof FeedNewRoute
   '/pharmacy/dashboard': typeof PharmacyDashboardRoute
   '/pharmacy/register': typeof PharmacyRegisterRoute
@@ -226,9 +242,11 @@ export interface FileRoutesById {
   '/profile': typeof ProfileRoute
   '/signup': typeof SignupRoute
   '/terms': typeof TermsRoute
+  '/admin/verifications': typeof AdminVerificationsRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/consultation/$id': typeof ConsultationIdRoute
   '/doctor/$id': typeof DoctorIdRoute
+  '/doctor/verification': typeof DoctorVerificationRoute
   '/feed/new': typeof FeedNewRoute
   '/pharmacy/dashboard': typeof PharmacyDashboardRoute
   '/pharmacy/register': typeof PharmacyRegisterRoute
@@ -254,9 +272,11 @@ export interface FileRouteTypes {
     | '/profile'
     | '/signup'
     | '/terms'
+    | '/admin/verifications'
     | '/checkout/return'
     | '/consultation/$id'
     | '/doctor/$id'
+    | '/doctor/verification'
     | '/feed/new'
     | '/pharmacy/dashboard'
     | '/pharmacy/register'
@@ -280,9 +300,11 @@ export interface FileRouteTypes {
     | '/profile'
     | '/signup'
     | '/terms'
+    | '/admin/verifications'
     | '/checkout/return'
     | '/consultation/$id'
     | '/doctor/$id'
+    | '/doctor/verification'
     | '/feed/new'
     | '/pharmacy/dashboard'
     | '/pharmacy/register'
@@ -306,9 +328,11 @@ export interface FileRouteTypes {
     | '/profile'
     | '/signup'
     | '/terms'
+    | '/admin/verifications'
     | '/checkout/return'
     | '/consultation/$id'
     | '/doctor/$id'
+    | '/doctor/verification'
     | '/feed/new'
     | '/pharmacy/dashboard'
     | '/pharmacy/register'
@@ -333,9 +357,11 @@ export interface RootRouteChildren {
   ProfileRoute: typeof ProfileRoute
   SignupRoute: typeof SignupRoute
   TermsRoute: typeof TermsRoute
+  AdminVerificationsRoute: typeof AdminVerificationsRoute
   CheckoutReturnRoute: typeof CheckoutReturnRoute
   ConsultationIdRoute: typeof ConsultationIdRoute
   DoctorIdRoute: typeof DoctorIdRoute
+  DoctorVerificationRoute: typeof DoctorVerificationRoute
   PharmacyDashboardRoute: typeof PharmacyDashboardRoute
   PharmacyRegisterRoute: typeof PharmacyRegisterRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
@@ -476,6 +502,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FeedNewRouteImport
       parentRoute: typeof FeedRoute
     }
+    '/doctor/verification': {
+      id: '/doctor/verification'
+      path: '/doctor/verification'
+      fullPath: '/doctor/verification'
+      preLoaderRoute: typeof DoctorVerificationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/doctor/$id': {
       id: '/doctor/$id'
       path: '/doctor/$id'
@@ -495,6 +528,13 @@ declare module '@tanstack/react-router' {
       path: '/checkout/return'
       fullPath: '/checkout/return'
       preLoaderRoute: typeof CheckoutReturnRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/verifications': {
+      id: '/admin/verifications'
+      path: '/admin/verifications'
+      fullPath: '/admin/verifications'
+      preLoaderRoute: typeof AdminVerificationsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/feed/post/$id': {
@@ -543,9 +583,11 @@ const rootRouteChildren: RootRouteChildren = {
   ProfileRoute: ProfileRoute,
   SignupRoute: SignupRoute,
   TermsRoute: TermsRoute,
+  AdminVerificationsRoute: AdminVerificationsRoute,
   CheckoutReturnRoute: CheckoutReturnRoute,
   ConsultationIdRoute: ConsultationIdRoute,
   DoctorIdRoute: DoctorIdRoute,
+  DoctorVerificationRoute: DoctorVerificationRoute,
   PharmacyDashboardRoute: PharmacyDashboardRoute,
   PharmacyRegisterRoute: PharmacyRegisterRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
