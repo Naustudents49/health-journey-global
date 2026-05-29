@@ -1622,8 +1622,12 @@ export type Database = {
           created_at: string
           doctor_id: string
           id: string
+          moderated_at: string | null
+          moderated_by: string | null
+          moderation_notes: string | null
           patient_id: string
           rating: number
+          status: string
         }
         Insert: {
           appointment_id?: string | null
@@ -1631,8 +1635,12 @@ export type Database = {
           created_at?: string
           doctor_id: string
           id?: string
+          moderated_at?: string | null
+          moderated_by?: string | null
+          moderation_notes?: string | null
           patient_id: string
           rating: number
+          status?: string
         }
         Update: {
           appointment_id?: string | null
@@ -1640,10 +1648,22 @@ export type Database = {
           created_at?: string
           doctor_id?: string
           id?: string
+          moderated_at?: string | null
+          moderated_by?: string | null
+          moderation_notes?: string | null
           patient_id?: string
           rating?: number
+          status?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "reviews_moderated_by_fkey"
+            columns: ["moderated_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       specialties: {
         Row: {
