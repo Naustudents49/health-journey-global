@@ -204,6 +204,65 @@ export type Database = {
         }
         Relationships: []
       }
+      doctor_billing_settings: {
+        Row: {
+          account_holder: string | null
+          bank_name: string | null
+          created_at: string
+          doctor_details_id: string
+          iban_or_account: string | null
+          instapay_handle: string | null
+          minimum_payout: number
+          payout_method: string
+          platform_fee_pct: number
+          swift: string | null
+          tax_id: string | null
+          updated_at: string
+          vat_registered: boolean
+          vodafone_number: string | null
+        }
+        Insert: {
+          account_holder?: string | null
+          bank_name?: string | null
+          created_at?: string
+          doctor_details_id: string
+          iban_or_account?: string | null
+          instapay_handle?: string | null
+          minimum_payout?: number
+          payout_method?: string
+          platform_fee_pct?: number
+          swift?: string | null
+          tax_id?: string | null
+          updated_at?: string
+          vat_registered?: boolean
+          vodafone_number?: string | null
+        }
+        Update: {
+          account_holder?: string | null
+          bank_name?: string | null
+          created_at?: string
+          doctor_details_id?: string
+          iban_or_account?: string | null
+          instapay_handle?: string | null
+          minimum_payout?: number
+          payout_method?: string
+          platform_fee_pct?: number
+          swift?: string | null
+          tax_id?: string | null
+          updated_at?: string
+          vat_registered?: boolean
+          vodafone_number?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "doctor_billing_settings_doctor_details_id_fkey"
+            columns: ["doctor_details_id"]
+            isOneToOne: true
+            referencedRelation: "doctor_details"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       doctor_consent: {
         Row: {
           created_at: string
@@ -409,6 +468,128 @@ export type Database = {
             foreignKeyName: "doctor_followup_settings_doctor_details_id_fkey"
             columns: ["doctor_details_id"]
             isOneToOne: true
+            referencedRelation: "doctor_details"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      doctor_transactions: {
+        Row: {
+          appointment_id: string | null
+          created_at: string
+          currency: string
+          description: string | null
+          doctor_details_id: string
+          gross_amount: number
+          id: string
+          metadata: Json | null
+          net_amount: number
+          platform_fee: number
+          status: string
+          type: string
+        }
+        Insert: {
+          appointment_id?: string | null
+          created_at?: string
+          currency?: string
+          description?: string | null
+          doctor_details_id: string
+          gross_amount: number
+          id?: string
+          metadata?: Json | null
+          net_amount: number
+          platform_fee?: number
+          status?: string
+          type: string
+        }
+        Update: {
+          appointment_id?: string | null
+          created_at?: string
+          currency?: string
+          description?: string | null
+          doctor_details_id?: string
+          gross_amount?: number
+          id?: string
+          metadata?: Json | null
+          net_amount?: number
+          platform_fee?: number
+          status?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "doctor_transactions_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: false
+            referencedRelation: "appointments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "doctor_transactions_doctor_details_id_fkey"
+            columns: ["doctor_details_id"]
+            isOneToOne: false
+            referencedRelation: "doctor_details"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      doctor_withdrawals: {
+        Row: {
+          admin_note: string | null
+          amount: number
+          created_at: string
+          currency: string
+          doctor_details_id: string
+          doctor_note: string | null
+          id: string
+          method: string
+          payout_details_snapshot: Json | null
+          processed_at: string | null
+          processed_by: string | null
+          reference: string | null
+          requested_at: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          admin_note?: string | null
+          amount: number
+          created_at?: string
+          currency?: string
+          doctor_details_id: string
+          doctor_note?: string | null
+          id?: string
+          method: string
+          payout_details_snapshot?: Json | null
+          processed_at?: string | null
+          processed_by?: string | null
+          reference?: string | null
+          requested_at?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          admin_note?: string | null
+          amount?: number
+          created_at?: string
+          currency?: string
+          doctor_details_id?: string
+          doctor_note?: string | null
+          id?: string
+          method?: string
+          payout_details_snapshot?: Json | null
+          processed_at?: string | null
+          processed_by?: string | null
+          reference?: string | null
+          requested_at?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "doctor_withdrawals_doctor_details_id_fkey"
+            columns: ["doctor_details_id"]
+            isOneToOne: false
             referencedRelation: "doctor_details"
             referencedColumns: ["id"]
           },
